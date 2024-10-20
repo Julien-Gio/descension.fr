@@ -1,0 +1,15 @@
+{{ define "main" }}
+
+home template
+{{ .Content }}
+
+{{/* Events list */}}
+
+<div class="list-container">
+    {{ range where site.RegularPages "Section" "p" }}
+        <h2><a href="{{ .RelPermalink }}">{{ .Param "Name" }}</a></h2>
+    {{ end }}
+</div>
+
+{{ end }}
+
