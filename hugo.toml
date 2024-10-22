@@ -52,12 +52,12 @@ name = "home"
 url = "/"
 
 [[params.menu]]
-name = "posts"
-url = "/posts"
+name = "participants"
+url = "/p"
 
 [[params.menu]]
-name = "about"
-url = "/about"
+name = "editions"
+url = "/e"
 
 # Syntax highligth on code blocks
 # [markup]
