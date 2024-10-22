@@ -48,7 +48,7 @@ breadcrumbs = true
 
 # Main menu pages
 [[params.menu]]
-name = "home"
+name = ""
 url = "/"
 
 [[params.menu]]
