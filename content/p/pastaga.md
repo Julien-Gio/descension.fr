@@ -4,7 +4,6 @@ title = "Pastaga"
 aliases = []
 [params]
     name = "Pastaga"
-    toc = false
 +++
 
 ## La vie de Pastaga

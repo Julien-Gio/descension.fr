@@ -3,7 +3,6 @@ languageCode = 'en-us'
 title = 'descension'
 theme = 'typo'
 
-
 [params]
 # Meta description
 description = "Description TODO"
@@ -20,7 +19,6 @@ TODO. I am an Italian Software Engineer with a strong foundation in computer sci
 I am interested in a range of topics, including algorithms, distributed systems, databases, and information retrieval.
 """
 
-
 # Collection to display on home
 homeCollectionTitle = 'Posts'
 homeCollection = 'posts'
@@ -33,24 +31,7 @@ listDateFormat = '2 Jan 2006'
 # Breadcrumbs
 breadcrumbs = true
 
-# Social icons
-# [[params.social]]
-# name = "linkedin"
-# url = "https://www.linkedin.com/in/user/"
-
-# [[params.social]]
-# name = "medium"
-# url = "https://medium.com/@user"
-
-# [[params.social]]
-# name = "github"
-# url = "https://github.com/user"
-
 # Main menu pages
-[[params.menu]]
-name = ""
-url = "/"
-
 [[params.menu]]
 name = "participants"
 url = "/p"
@@ -64,12 +45,3 @@ url = "/e"
 # [markup.highlight]
 # style = 'algol'
 
-# Giscus comments
-# [params.giscus]
-# enable = false
-# repo = "user/repo"
-# repoid = "repoId"
-# category = "General"
-# categoryid = "categoryId"
-# mapping = "pathname"
-# theme = "preferred_color_scheme"
