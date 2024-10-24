@@ -1,26 +1,21 @@
 {{/* Header */}}
-
 <div class="header">
-    {{ if or (not (.Param "hideHeader")) .IsHome }}
-
+    {{ if or (not (.Param "hideHeader")) .IsHome -}}
     <h1 class="header-title">
-        <a class="no-underline" href="/">{{ site.Title }}</a>
+        <a href="/">{{ site.Title }}</a>
     </h1>
 
     <div class="flex">
-        {{ $currentPage := . }}
-
-        {{ with site.Params.menu }}
-        {{ range . }}
+        {{ $currentPage := . -}}
+        {{- with site.Params.menu -}}
+        {{- range . }}
         <p class="small {{ if eq .name (lower $currentPage.Name) }} bold {{end}}">
             <a href="{{ .url }}" {{ if and (isset . "newTab") .newTab }}target="_blank" rel="noopener noreferrer"{{ end }}>
                 /{{.name }}
             </a>
         </p>
-        {{ end }}
+        {{ end -}}
         {{ end }}
     </div>
-
     {{ end }}
-
 </div>

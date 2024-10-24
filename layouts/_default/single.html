@@ -1,11 +1,9 @@
-{{ define "main" }}
+{{- define "main" -}}
 
 {{/* Breadcrumbs */}}
-
-{{ if not .IsHome }}
+{{- if not .IsHome }}
 {{ partial "breadcrumbs.html" . }}
-{{ end }}
-
+{{- end }}
 
 {{/* Title and Summary */}}
 <div class="single-intro-container">
@@ -19,4 +17,4 @@
   {{ .Content }}
 </div>
 
-{{ end }}
+{{- end }}

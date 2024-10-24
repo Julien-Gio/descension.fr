@@ -7,10 +7,7 @@ theme = 'typo'
 # Meta description
 description = "Description TODO"
 
-# Appearance settings
-theme = 'auto'
-colorPalette = 'default'
-hideHeader = false
+cssPaths = [ "/css/main.css", "/css/fonts.css", "/css/helperClasses.css" ]
 
 # Intro on main page, content is markdown
 homeIntroTitle = 'Hi!'
