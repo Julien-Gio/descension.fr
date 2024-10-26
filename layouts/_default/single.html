@@ -3,7 +3,7 @@
 {{/* Title and Summary */}}
 <div class="single-intro-container">
   <h1 class="single-title">{{ .Title }}</h1>
-  {{ with .Param "summary" }}
+  {{ with .Summary }}
   <p class="single-summary">{{ . | markdownify }}</p>
   {{ end }}
 </div>
