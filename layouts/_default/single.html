@@ -1,10 +1,5 @@
 {{- define "main" -}}
 
-{{/* Breadcrumbs */}}
-{{- if not .IsHome }}
-{{ partial "breadcrumbs.html" . }}
-{{- end }}
-
 {{/* Title and Summary */}}
 <div class="single-intro-container">
   <h1 class="single-title">{{ .Title }}</h1>

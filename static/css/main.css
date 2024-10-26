@@ -450,12 +450,6 @@ figcaption {
   margin-bottom: 3rem;
 }
 
-/* Breadcrumbs */
-.breadcrumbs {
-  font-size: 0.8em;
-  margin-bottom: calc(-0.5 * var(--h1-margin-top));
-}
-
 /* Back to top */
 .back-to-top {
   text-align: center;
