@@ -1,0 +1,12 @@
+{{ define "main" -}}
+
+<div class="list-container">
+    {{ partial "breadcrumbs.html" . }}
+    <h1>{{ .Title }}</h1>
+    {{ .Content }}
+
+    {{- range $index, $page := .Pages }}
+    {{ partial "post-entry.html" $page}}
+    {{- end }}
+</div>
+{{- end }}
