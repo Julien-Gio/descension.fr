@@ -3,11 +3,19 @@
 home template
 {{ .Content }}
 
-{{/* Events list */}}
+{{/* Event list */}}
+<h2>Editions</h2>
+<div class="list-container-compact">
+    {{ range where site.RegularPages "Section" "e" }}
+        <a href="{{ .RelPermalink }}">{{ .Param "Name" }}</a>
+    {{ end }}
+</div>
 
-<div class="list-container">
+{{/* Participant list */}}
+<h2>Participants</h2>
+<div class="list-container-compact">
     {{ range where site.RegularPages "Section" "p" }}
-        <h2><a href="{{ .RelPermalink }}">{{ .Param "Name" }}</a></h2>
+        <a href="{{ .RelPermalink }}">{{ .Param "Name" }}</a>
     {{ end }}
 </div>
 

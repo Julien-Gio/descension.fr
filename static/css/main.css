@@ -250,6 +250,29 @@ footer a {
   padding-bottom: 3rem;
 }
 
+.list-container-compact {
+  padding-bottom: 3rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  grid-auto-rows: 2em;
+  justify-items: center;
+  align-items: end;
+}
+
+.list-container-compact > a {
+  text-decoration: none;
+  border-bottom: solid 1px var(--content-primary);
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-bottom: 0.3em;
+  transition: 0.155s ease-out;
+}
+
+.list-container-compact > a:hover {
+  padding-bottom: 0.45em;
+  border-bottom: solid 2px var(--content-primary);
+}
+
 .pagination {
   display: flex;
   align-items: center;

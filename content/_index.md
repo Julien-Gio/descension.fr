@@ -5,5 +5,4 @@ title = "Home"
 +++
 
 
-# \_index.md
 This is the body content of the _\_index.md_ file.
