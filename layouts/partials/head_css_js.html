@@ -1,9 +1,0 @@
-
-{{- range .Site.Params.cssPaths -}}
-    <link rel="stylesheet" href="{{ . | absURL }}" media="all">
-{{ end -}}
-
-{{- range .Site.Params.jsPaths -}}
-    <script type="text/javascript" href="{{ . | absURL }}" media="all"></script>
-{{ end -}}
-
