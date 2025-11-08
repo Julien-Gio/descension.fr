@@ -57,7 +57,7 @@ primary: BOOLEAN | NUMBER | DATE | STRING | PARTICIPANT
 The lexer takes the raw text file and turns it into an array of tokens.
 
 Here is an example:
-```lua
+```
 type edition
 name 2025
 dates from (2025-09-05) to (2025-09-08)
@@ -77,14 +77,14 @@ end
 
 --- EXPECTED OUTPUT TOKENS ---
 
-(IDENTIFIER type)
-(IDENTIFIER edition)
+(TYPE)
+(EDITION)
 (IDENTIFIER page-name)
 (NUMBER 2025)
 (IDENTIFIER dates)
-(IDENTIFIER from)
+(FROM)
 (DATE 2025-09-05)
-(IDENTIFIER to)
+(TO)
 (DATE 2025-09-08)
 (IDENTIFIER standing)
 (OPEN_BRACKET [)
@@ -103,8 +103,8 @@ end
 (STRING Bla bla bla.
 This is a multi-line text example.
 )
-(IDENTIFIER define)
-(IDENTIFIER game-group)
+(DEFINE)
+(GAME-GROUP)
 (STRING FFA (4 joueurs))
 (TAG individual-games)
 (IDENTIFIER description)
@@ -116,27 +116,26 @@ This is a multi-line text example.
 (NUMBER +2)
 (NUMBER +1)
 (CLOSE_BRACKET ])
-(IDENTIFIER game)
+(GAME)
 (STRING Blaze Rush)
-(IDENTIFIER results)
+(RESULTS)
 (OPEN_BRACKET [)
 (PARTICIPANT Pastaga)
 (PARTICIPANT Otho)
 (PARTICIPANT Lintendo)
 (PARTICIPANT 404)
 (CLOSE_BRACKET ])
-(IDENTIFIER game)
+(GAME)
 (STRING Tricky Tower)
-(IDENTIFIER results)
+(RESULTS)
 (OPEN_BRACKET [)
 (PARTICIPANT P.M)
 (PARTICIPANT Catapulte)
 (PARTICIPANT Dua)
 (PARTICIPANT Barbeer)
 (CLOSE_BRACKET ])
-(IDENTIFIER end)
+(END)
 ```
-
 
 
 # Parsing

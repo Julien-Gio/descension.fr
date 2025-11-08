@@ -56,26 +56,26 @@
           do (cond ((match-any-p stream whitespace-chars) (consume stream)) ; Skip
                    ((matchp stream #\[)               (consume stream) (setf tokens (cons (list 'OPEN_BRACKET "[") tokens)))
                    ((matchp stream #\])               (consume stream) (setf tokens (cons (list 'CLOSE_BRACKET "]") tokens)))
-                   ((matchp stream #\#)               (consume stream) (setf tokens (cons (lexTag stream) tokens)))
-                   ((matchp stream #\@)               (consume stream) (setf tokens (cons (lexParticipant stream) tokens)))
-                   ((matchp stream (character "("))   (consume stream) (setf tokens (cons (lexDate stream) tokens)))
-                   ((matchp stream #\")               (consume stream) (setf tokens (cons (lexString stream) tokens)))
-                   ((match-any-p stream '(#\+ #\-))   (setf tokens (cons (lexNumber stream) tokens)))
-                   ((match-any-p stream number-chars) (setf tokens (cons (lexNumber stream) tokens)))
-                   ((match-any-p stream alpha-chars)  (setf tokens (cons (lexIdentifier stream) tokens)))
+                   ((matchp stream #\#)               (consume stream) (setf tokens (cons (lex-tag stream) tokens)))
+                   ((matchp stream #\@)               (consume stream) (setf tokens (cons (lex-participant stream) tokens)))
+                   ((matchp stream (character "("))   (consume stream) (setf tokens (cons (lex-date stream) tokens)))
+                   ((matchp stream #\")               (consume stream) (setf tokens (cons (lex-string stream) tokens)))
+                   ((match-any-p stream '(#\+ #\-))   (setf tokens (cons (lex-number stream) tokens)))
+                   ((match-any-p stream number-chars) (setf tokens (cons (lex-number stream) tokens)))
+                   ((match-any-p stream alpha-chars)  (setf tokens (cons (lex-keyword-or-identifier stream) tokens)))
                    (t (format t "~&ERROR unhandled char (~A)" (char-code char)) (consume stream))))
     (reverse tokens)))
 
 ; TAG: "#" (ALPHA | DIGIT | SPECIAL)+
-(defun lexTag (stream)
+(defun lex-tag (stream)
   (list 'TAG (match-and-consume stream alphanumeric-chars)))
 
 ; PARTICIPANT: ">" (ALPHA | DIGIT | SPECIAL)+
-(defun lexParticipant (stream)
+(defun lex-participant (stream)
   (list 'PARTICIPANT (match-and-consume stream alphanumeric-chars)))
 
 ; NUMBER: "+"? "-"? DIGIT+ "."? DIGIT*
-(defun lexNumber (stream)
+(defun lex-number (stream)
   (let ((buffer (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T)))
     (if (matchp stream #\+) (append-char buffer (consume stream)))
     (if (matchp stream #\-) (append-char buffer (consume stream)))
@@ -89,24 +89,34 @@
     (list 'NUMBER buffer)))
 
 ; IDENTIFIER: ALPHA (ALPHA | DIGIT | SPECIAL)*
-(defun lexIdentifier (stream)
+(defun lex-keyword-or-identifier (stream)
    (let ((buffer (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T)))
     (append-char buffer (consume stream))
     (append-vector buffer (match-and-consume stream alphanumeric-chars))
-    (list 'IDENTIFIER buffer)))
+    (cond ((equal "type" buffer) '(TYPE))
+          ((equal "edition" buffer) '(EDITION))
+          ((equal "participant" buffer) '(PARTICIPANT))
+          ((equal "from" buffer) '(FROM))
+          ((equal "to" buffer) '(TO))
+          ((equal "define" buffer) '(DEFINE))
+          ((equal "end" buffer) '(END))
+          ((equal "game-group" buffer) '(GAME-GROUP))
+          ((equal "game" buffer) '(GAME))
+          ((equal "results" buffer) '(RESULTS))
+          ((equal "set" buffer) '(set))
+          (T (list 'IDENTIFIER buffer)))))
   
 ; DATE: "(" DIGIT DIGIT DIGIT DIGIT "-" DIGIT DIGIT "-" DIGIT DIGIT ")"
-(defun lexDate (stream)
+(defun lex-date (stream)
   (let ((buffer (match-and-consume-until stream (list (character ")")))))
     (consume stream)  ; consume the closing parenthesis.
     (list 'DATE buffer)))
 
 ; STRING "\"" <anything but a double-quote>* "\""
-(defun lexString (stream)
+(defun lex-string (stream)
   (let ((buffer (match-and-consume-until stream '(#\"))))
     (consume stream)  ; consume the closing quote.
     (list 'STRING buffer)))
-
 
 ; ----------------------------------------
 
