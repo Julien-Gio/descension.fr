@@ -106,3 +106,10 @@
   (let ((buffer (match-and-consume-until stream '(#\"))))
     (consume stream)  ; consume the closing quote.
     (list 'STRING buffer)))
+
+
+; ----------------------------------------
+
+(defun print-tokens (tokens) 
+  (loop for token in tokens 
+        do (format t "~&~a" token)))

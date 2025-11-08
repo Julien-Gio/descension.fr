@@ -12,4 +12,4 @@
 (print input)
 
 (setf tokens (lexer (make-string-input-stream input)))
-(loop for token in tokens do (format t "~&~a" token))
+; (print-tokens tokens)
