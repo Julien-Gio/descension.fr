@@ -6,6 +6,8 @@ Data types:
 - Participants (`@Pastaga`, `@P.M`, `@404`)
 - Arrays (`[...]`)
 - Ranges (`from ... to ...`)
+- Maps (`... set ...`)
+- Comments (`; comments start with semi-colon. Also, I know comments aren't datatype, whatever.`)
 
 Tokens (grammar):
 ```yaml
@@ -19,9 +21,20 @@ ALPHA: "a" | "b" ... | "z" | "A" | "B" ... | "Z" | "_"
 SPECIAL: "." | "-" 
 DIGIT: "0" | "1" ... | "9"
 
-// Other syntax
+// Keywords and other syntax
 OPEN_BRACKET: "["
 CLOSE_BRACKET: "]"
+TYPE: "type"
+EDITION: "edition"
+PARTICIPANT: "participant"
+FROM: "from"
+TO: "to"
+DEFINE: "define"
+END: "end"
+GAME-GROUP: "game-group"
+GAME: "game"
+RESULTS: "results"
+SET: "set"
 ```
 
 Grammar :
@@ -58,7 +71,7 @@ The lexer takes the raw text file and turns it into an array of tokens.
 
 Here is an example:
 ```
-type edition
+type edition ; this is a comment and is ignored.
 name 2025
 dates from (2025-09-05) to (2025-09-08)
 standing [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
@@ -185,7 +198,13 @@ With substructures:
   :GROUP nil  ; string
   :TAGS nil  ; list of string
   :POINTS 0  ; number
-  :RESULTS nil)  ; list of #S(PARTICIPANT-REF)
+  :RESULTS nil  ; list of #S(PARTICIPANT-REF)
+  :CUSTOM-DATA nil)  ; list of #S(GAME-CUSTOM-DATA)
+
+(defstruct GAME-CUSTOM-DATA
+  :NAME nil  ; string
+  :DATA nil  ; list of pairs(PARTICIPANT-REF, number | string)
+  :TAGS nil)  ; list of symbols
 ```
 
 Example of decoded edition structure:  

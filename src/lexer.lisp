@@ -53,7 +53,8 @@
         (tokens ()))
     (loop for char = (peek-char nil stream nil)
           while (not (null char))
-          do (cond ((match-any-p stream whitespace-chars) (consume stream)) ; Skip
+          do (cond ((matchp stream #\;) (match-and-consume-until stream '(#\newline #\return #\linefeed))) ; Skip comments
+                   ((match-any-p stream whitespace-chars) (consume stream)) ; Skip whitespace
                    ((matchp stream #\[)               (consume stream) (setf tokens (cons (list 'OPEN_BRACKET "[") tokens)))
                    ((matchp stream #\])               (consume stream) (setf tokens (cons (list 'CLOSE_BRACKET "]") tokens)))
                    ((matchp stream #\#)               (consume stream) (setf tokens (cons (lex-tag stream) tokens)))
