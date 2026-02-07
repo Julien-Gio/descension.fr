@@ -1,3 +1,5 @@
+(in-package #:lexer)
+
 (defvar number-chars)
 (setf number-chars '(#\0 #\1 #\2 #\3 #\4 #\5 #\6 #\7 #\8 #\9))
 
@@ -30,7 +32,9 @@
         ((matchp stream (first chars)) T)
         (t (match-any-p stream (rest chars)))))
 
-(defun matchp (stream char) (char= char (peek-char nil stream nil)))
+(defun matchp (stream char) 
+  (let ((peeked-char (peek-char nil stream nil)))
+    (and (not (null peeked-char)) (char= char peeked-char))))
 
 (defun consume (stream) (read-char stream))
 
@@ -48,17 +52,16 @@
 
 ; -----------------------------------
 
-(defun lexer (stream)
-  (let ((buffer ())
-        (tokens ()))
+(defun lex (stream)
+  (let ((tokens ()))
     (loop for char = (peek-char nil stream nil)
           while (not (null char))
           do (cond ((matchp stream #\;) (match-and-consume-until stream '(#\newline #\return #\linefeed))) ; Skip comments
                    ((match-any-p stream whitespace-chars) (consume stream)) ; Skip whitespace
-                   ((matchp stream #\[)               (consume stream) (setf tokens (cons (list 'OPEN_BRACKET "[") tokens)))
-                   ((matchp stream #\])               (consume stream) (setf tokens (cons (list 'CLOSE_BRACKET "]") tokens)))
+                   ((matchp stream #\[)               (consume stream) (setf tokens (cons (list :OPEN_BRACKET "[") tokens)))
+                   ((matchp stream #\])               (consume stream) (setf tokens (cons (list :CLOSE_BRACKET "]") tokens)))
                    ((matchp stream #\#)               (consume stream) (setf tokens (cons (lex-tag stream) tokens)))
-                   ((matchp stream #\@)               (consume stream) (setf tokens (cons (lex-participant stream) tokens)))
+                   ((matchp stream #\@)               (consume stream) (setf tokens (cons (lex-participant-ref stream) tokens)))
                    ((matchp stream (character "("))   (consume stream) (setf tokens (cons (lex-date stream) tokens)))
                    ((matchp stream #\")               (consume stream) (setf tokens (cons (lex-string stream) tokens)))
                    ((match-any-p stream '(#\+ #\-))   (setf tokens (cons (lex-number stream) tokens)))
@@ -69,11 +72,11 @@
 
 ; TAG: "#" (ALPHA | DIGIT | SPECIAL)+
 (defun lex-tag (stream)
-  (list 'TAG (match-and-consume stream alphanumeric-chars)))
+  (list :TAG (match-and-consume stream alphanumeric-chars)))
 
 ; PARTICIPANT: ">" (ALPHA | DIGIT | SPECIAL)+
-(defun lex-participant (stream)
-  (list 'PARTICIPANT (match-and-consume stream alphanumeric-chars)))
+(defun lex-participant-ref (stream)
+  (list :PARTICIPANT-REF (match-and-consume stream alphanumeric-chars)))
 
 ; NUMBER: "+"? "-"? DIGIT+ "."? DIGIT*
 (defun lex-number (stream)
@@ -87,37 +90,41 @@
         (progn (append-char buffer (consume stream))
                (append-vector buffer (match-and-consume stream number-chars))))
     
-    (list 'NUMBER buffer)))
+    (list :NUMBER buffer)))
 
 ; IDENTIFIER: ALPHA (ALPHA | DIGIT | SPECIAL)*
 (defun lex-keyword-or-identifier (stream)
-   (let ((buffer (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T)))
-    (append-char buffer (consume stream))
-    (append-vector buffer (match-and-consume stream alphanumeric-chars))
-    (cond ((equal "type" buffer) '(TYPE))
-          ((equal "edition" buffer) '(EDITION))
-          ((equal "participant" buffer) '(PARTICIPANT))
-          ((equal "from" buffer) '(FROM))
-          ((equal "to" buffer) '(TO))
-          ((equal "define" buffer) '(DEFINE))
-          ((equal "end" buffer) '(END))
-          ((equal "game-group" buffer) '(GAME-GROUP))
-          ((equal "game" buffer) '(GAME))
-          ((equal "results" buffer) '(RESULTS))
-          ((equal "set" buffer) '(set))
-          (T (list 'IDENTIFIER buffer)))))
+   (let ((lexeme (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T)))
+    (append-char lexeme (consume stream))
+    (append-vector lexeme (match-and-consume stream alphanumeric-chars))
+    (cond ((equal lexeme "type")        '(:TYPE))
+          ((equal lexeme "edition")     '(:EDITION))
+          ((equal lexeme "from")        '(:FROM))
+          ((equal lexeme "to")          '(:TO))
+          ((equal lexeme "define")      '(:DEFINE))
+          ((equal lexeme "end")         '(:END))
+          ((equal lexeme "name")        '(:NAME))
+          ((equal lexeme "standing")    '(:STANDING))
+          ((equal lexeme "description") '(:DESCRIPTION))
+          ((equal lexeme "dates")       '(:DATES))
+          ((equal lexeme "game-group")  '(:GAME-GROUP))
+          ((equal lexeme "points")      '(:POINTS))
+          ((equal lexeme "game")        '(:GAME))
+          ((equal lexeme "results")     '(:RESULTS))
+          ((equal lexeme "set")         '(:SET))
+          (T (list :IDENTIFIER lexeme)))))
   
 ; DATE: "(" DIGIT DIGIT DIGIT DIGIT "-" DIGIT DIGIT "-" DIGIT DIGIT ")"
 (defun lex-date (stream)
   (let ((buffer (match-and-consume-until stream (list (character ")")))))
     (consume stream)  ; consume the closing parenthesis.
-    (list 'DATE buffer)))
+    (list :DATE buffer)))
 
 ; STRING "\"" <anything but a double-quote>* "\""
 (defun lex-string (stream)
   (let ((buffer (match-and-consume-until stream '(#\"))))
     (consume stream)  ; consume the closing quote.
-    (list 'STRING buffer)))
+    (list :STRING buffer)))
 
 ; ----------------------------------------
 

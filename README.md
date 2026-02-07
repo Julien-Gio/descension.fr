@@ -1,3 +1,9 @@
+# DESCENSION SSG
+```
+sbcl --script run.lisp
+```
+
+# Types and Grammar
 Data types:
 - Numbers (`123`, `3.1415`, `+12`, `-31`, `2.`, `.99`)
 - Dates (`2025-11-04`)
@@ -31,7 +37,12 @@ FROM: "from"
 TO: "to"
 DEFINE: "define"
 END: "end"
+NAME: "name"
+STANDING: "standing"
+DESCRIPTION: "description"
+DATES: "dates"
 GAME-GROUP: "game-group"
+POINTS: "points"
 GAME: "game"
 RESULTS: "results"
 SET: "set"
@@ -72,7 +83,7 @@ The lexer takes the raw text file and turns it into an array of tokens.
 Here is an example:
 ```
 type edition ; this is a comment and is ignored.
-name 2025
+name "2025"
 dates from (2025-09-05) to (2025-09-08)
 standing [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
 
@@ -92,14 +103,14 @@ end
 
 (TYPE)
 (EDITION)
-(IDENTIFIER page-name)
-(NUMBER 2025)
-(IDENTIFIER dates)
+(NAME)
+(STRING 2025)
+(DATES)
 (FROM)
 (DATE 2025-09-05)
 (TO)
 (DATE 2025-09-08)
-(IDENTIFIER standing)
+(STANDING)
 (OPEN_BRACKET [)
 (PARTICIPANT Parapluie)
 (PARTICIPANT 404)
@@ -112,7 +123,7 @@ end
 (PARTICIPANT Lintendo)
 (PARTICIPANT JMM)
 (CLOSE_BRACKET ])
-(IDENTIFIER description)
+(DESCRIPTION)
 (STRING Bla bla bla.
 This is a multi-line text example.
 )
@@ -120,9 +131,9 @@ This is a multi-line text example.
 (GAME-GROUP)
 (STRING FFA (4 joueurs))
 (TAG individual-games)
-(IDENTIFIER description)
+(DESCRIPTION)
 (STRING Règles : chaque canditat joue à 4 jeux dans la liste.)
-(IDENTIFIER points)
+(POINTS)
 (OPEN_BRACKET [)
 (NUMBER +5)
 (NUMBER +3)
