@@ -3,3 +3,13 @@ name "2025"
 dates from (2025-09-05) to (2025-09-08)
 standing [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
 
+description "Bla bla bla.
+This is a multi-line text example.
+"
+
+define game-group "FFA (4 joueurs)" #individual-games
+	description "Règles : chaque canditat joue à 4 jeux dans la liste."
+	points [+5 +3 +2 +1]
+	game "Blaze Rush" results   [@Pastaga   @Otho      @Lintendo @404]
+	game "Tricky Tower" results [@P.M       @Catapulte @Dua      @Barbeer]
+end

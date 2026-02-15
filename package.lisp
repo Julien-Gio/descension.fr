@@ -1,6 +1,6 @@
 (defpackage #:edition
   (:use #:cl)
-  (:export #:edition
+  (:export #:EDITION
            #:make-edition
            #:edition-name
            #:edition-dates
@@ -11,7 +11,13 @@
            #:edition-games
            #:PARTICIPANT-REF
            #:make-participant-ref
-           #:game))
+           #:participant-ref-name
+           #:GAME-GROUP
+           #:make-game-group
+           #:game-group-name
+           #:game-group-description
+           #:game-group-points
+           #:game-group-tags))
 
 (defpackage #:parser
   (:use #:cl #:edition)

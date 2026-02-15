@@ -9,6 +9,11 @@
   (game-groups NIL)
   (games NIL))
 
+(defstruct GAME-GROUP
+  (name "")
+  (tags nil)
+  (description "")
+  (points nil))
 
 (defstruct GAME
   (name "")
@@ -20,3 +25,5 @@
 
 (defstruct PARTICIPANT-REF
  (name ""))
+
+ 

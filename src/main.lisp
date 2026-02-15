@@ -11,10 +11,12 @@
           do (format input "~A~&" line)))
   (print input)
 
-  (setf tokens (lexer:lex (make-string-input-stream input)))
-  (lexer:print-tokens tokens)
+  (format t "~& -----")
 
-  (format t "~&")
+  (setf tokens (lexer:lex (make-string-input-stream input)))
+  ; (lexer:print-tokens tokens)
+
+  (format t "~& -----")
 
   (setf data (parser:parse tokens))
   (print data))

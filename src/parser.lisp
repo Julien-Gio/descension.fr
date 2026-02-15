@@ -2,6 +2,11 @@
 
 (defparameter _ nil) ; throwaway var. I need to declare it to silence warnings of unused vars.
 
+(defmacro push-end (place element)
+  `(setf ,place (append ,place (list ,element))))
+
+; ---
+
 (defun parse (tokens) 
   (cond ((or (null tokens) (not (token-type-p (first tokens) :TYPE)))
          (format t "~&Error, expected 'type' keyword at top of file.")
@@ -14,23 +19,33 @@
 ; --- Parse EDITION
 (defun parse-edition (tokens)
   (loop with edition = (make-edition)
+        repeat 1000 ; avoid infinite loops
         while tokens
-        do (multiple-value-setq (tokens edition)
-             (parse-edition-field tokens edition))
+        do ; (format T "~&Parsing: ~a" (first tokens))
+        (multiple-value-setq (tokens edition) (parse-edition-field tokens edition))
+         
         finally (return edition)))
 
 (defun parse-edition-field (tokens edition)
   (let ((token (first tokens)))
     (cond 
-      ((token-type-p token :NAME) (parse-name tokens edition))
-      ((token-type-p token :DATES) (parse-date tokens edition))
-      ((token-type-p token :STANDING) (parse-standing tokens edition))
+      ((token-type-p token :NAME)        (parse-name tokens edition))
+      ((token-type-p token :DATES)       (parse-date tokens edition))
+      ((token-type-p token :STANDING)    (parse-standing tokens edition))
+      ((token-type-p token :DESCRIPTION) (parse-description tokens edition))
+      ((token-type-p token :DEFINE)      (parse-define tokens edition))
       (T (error "unexpected token ~a" (first tokens))))))
 
 (defun parse-name (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :NAME)
     (multiple-value-bind (str rest2) (consume rest :STRING)
       (setf (edition-name edition) (second str))
+      (values rest2 edition))))
+      
+(defun parse-description (tokens edition)
+  (multiple-value-bind (_ rest) (consume tokens :DESCRIPTION)
+    (multiple-value-bind (str rest2) (consume rest :STRING)
+      (setf (edition-description edition) (second str))
       (values rest2 edition))))
 
 (defun parse-date (tokens edition)
@@ -44,9 +59,63 @@
 
 (defun parse-standing (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :STANDING)
-  (multiple-value-bind (rest2 participants) (consume-array rest 'parse-participant-ref)
+  (multiple-value-bind (rest2 participants) (consume-array rest #'parse-participant-ref)
     (setf (edition-standing edition) participants)
     (values rest2 edition participants))))
+
+(defun parse-define (tokens edition)
+  (multiple-value-bind (_ rest) (consume tokens :DEFINE)
+  (multiple-value-bind (define-type rest2) (consume rest)
+    (cond
+     ; TODO ((token-type-p define-type :GAME) (parse-game rest2 edition))
+     ((token-type-p define-type :GAME-GROUP) (parse-game-group rest2 edition))
+     (T (error "unexpected token after define: ~a" (first rest2)))))))
+
+(defun parse-game-group (tokens edition)
+  (let ((game-group (make-game-group)))
+    (multiple-value-bind (name-token rest) (consume tokens :STRING)
+      (setf (game-group-name game-group) (second name-token))
+      (loop repeat 1000 ; avoid infinite loops
+            while (not (token-type-p (first rest) :END))
+            do ; (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
+              (multiple-value-setq (rest game-group) (parse-game-group-field rest game-group)))
+      (multiple-value-bind (_ rest2) (consume rest :END)
+      (push game-group (edition-game-groups edition))
+      (values rest2 edition)))))
+
+(defun parse-game-group-field (tokens game-group)
+  (let ((token (first tokens)))
+    (cond 
+      ((token-type-p token :TAG)         (parse-game-group-tag tokens game-group))
+      ((token-type-p token :DESCRIPTION) (parse-game-group-description tokens game-group))
+      ((token-type-p token :POINTS)      (parse-game-group-points tokens game-group))
+      ((token-type-p token :GAME)        (parse-game-group-game tokens game-group))
+      (T (error "unexpected token ~a" (first tokens))))))
+
+(defun parse-game-group-tag (tokens game-group)
+  (multiple-value-bind (tag-token rest) (consume tokens :TAG)
+    (push (second tag-token) (game-group-tags game-group))
+    (values rest game-group)))
+
+(defun parse-game-group-description (tokens game-group)
+  (multiple-value-bind (_ rest) (consume tokens :DESCRIPTION)
+  (multiple-value-bind (string-token rest2) (consume rest :STRING)
+    (setf (game-group-description game-group) (second string-token))
+    (values rest2 game-group))))
+
+(defun parse-game-group-points (tokens game-group)
+  (multiple-value-bind (_ rest) (consume tokens :POINTS)
+  (multiple-value-bind (rest2 numbers) (consume-array rest #'second)
+    (setf (game-group-points game-group) numbers)
+    (values rest2 game-group))))
+    
+(defun parse-game-group-game (tokens game-group)
+  (multiple-value-bind (_ rest) (consume tokens :GAME)
+  (multiple-value-bind (_ rest2) (consume rest :STRING)
+  (multiple-value-bind (_ rest3) (consume rest2 :RESULTS)
+  (multiple-value-bind (rest4 _) (consume-array rest3 #'parse-participant-ref)
+    ; TODO
+    (values rest4 game-group))))))
 
 
 ; --- Parse PARTICIPANT
@@ -83,5 +152,3 @@
         (error "Expected token type ~a, got ~a" expected-type (first token))))
       (values token (rest tokens))))
 
-(defmacro push-end (place element)
-  `(setf ,place (append ,place (list ,element))))
