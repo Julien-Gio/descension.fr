@@ -1,7 +1,5 @@
 (in-package #:parser)
 
-(defparameter _ nil) ; throwaway var. I need to declare it to silence warnings of unused vars.
-
 (defmacro push-end (place element)
   `(setf ,place (append ,place (list ,element))))
 
@@ -9,17 +7,16 @@
 
 (defun parse (tokens) 
   (cond ((or (null tokens) (not (token-type-p (first tokens) :TYPE)))
-         (format t "~&Error, expected 'type' keyword at top of file.")
-         (values nil))
+           (error "~&Error, expected 'type' keyword at top of file."))
         ((token-type-p (second tokens) :EDITION)
-         (parse-edition (rest (rest tokens))))
+           (parse-edition (rest (rest tokens))))
         (t 
-         (format t "~&Error, unhandled data type ~A" (second tokens)))))
+           (error "~&Error, unhandled data type ~a" (second tokens)))))
 
 ; --- Parse EDITION
 (defun parse-edition (tokens)
   (loop with edition = (make-edition)
-        repeat 1000 ; avoid infinite loops
+        repeat 10000 ; avoid infinite loops
         while tokens
         do ; (format T "~&Parsing: ~a" (first tokens))
         (multiple-value-setq (tokens edition) (parse-edition-field tokens edition))
@@ -33,19 +30,19 @@
       ((token-type-p token :DATES)       (parse-date tokens edition))
       ((token-type-p token :STANDING)    (parse-standing tokens edition))
       ((token-type-p token :DESCRIPTION) (parse-description tokens edition))
-      ((token-type-p token :DEFINE)      (parse-define tokens edition))
-      (T (error "unexpected token ~a" (first tokens))))))
+      ((token-type-p token :DEFINE)      (parse-define-block tokens edition))
+      (T (error "unexpected token ~a" (token-to-string (first tokens)))))))
 
 (defun parse-name (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :NAME)
-    (multiple-value-bind (str rest2) (consume rest :STRING)
-      (setf (edition-name edition) (second str))
+    (multiple-value-bind (str-token rest2) (consume rest :STRING)
+      (setf (edition-name edition) (token-literal str-token))
       (values rest2 edition))))
       
 (defun parse-description (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :DESCRIPTION)
-    (multiple-value-bind (str rest2) (consume rest :STRING)
-      (setf (edition-description edition) (second str))
+    (multiple-value-bind (str-token rest2) (consume rest :STRING)
+      (setf (edition-description edition) (token-literal str-token))
       (values rest2 edition))))
 
 (defun parse-date (tokens edition)
@@ -54,7 +51,7 @@
   (multiple-value-bind (start-date rest3) (consume rest2 :DATE)
   (multiple-value-bind (_ rest4) (consume rest3 :TO)
   (multiple-value-bind (end-date rest5) (consume rest4 :DATE)
-    (setf (edition-dates edition) (concatenate 'string (second start-date) ":" (second end-date)))  ; TODO JUL implement date ranges 
+    (setf (edition-dates edition) (concatenate 'string (token-literal start-date) ":" (token-literal end-date)))  ; TODO JUL implement date ranges 
     (values rest5 edition)))))))
 
 (defun parse-standing (tokens edition)
@@ -63,33 +60,32 @@
     (setf (edition-standing edition) participants)
     (values rest2 edition participants))))
 
-(defun parse-define (tokens edition)
+(defun parse-define-block (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :DEFINE)
   (multiple-value-bind (define-type rest2) (consume rest)
     (cond
      ; TODO ((token-type-p define-type :GAME) (parse-game rest2 edition))
      ((token-type-p define-type :GAME-GROUP) (parse-game-group rest2 edition))
-     (T (error "unexpected token after define: ~a" (first rest2)))))))
+     (T (error "unexpected token after define: ~a" (token-to-string define-type)))))))
 
 (defun parse-game-group (tokens edition)
   (let ((game-group (make-game-group))
         (points nil)
         (games nil))
     (multiple-value-bind (name-token rest) (consume tokens :STRING)
-      (setf (game-group-name game-group) (second name-token))
+      (setf (game-group-name game-group) (token-literal name-token))
       (loop repeat 1000 ; avoid infinite loops
             while (not (token-type-p (first rest) :END))
             for token = (first rest)
-            do (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
-              ; NOT WHAT I WANT (multiple-value-setq (rest game-group) (parse-game-group-field rest game-group))
-              (cond 
-                ((token-type-p token :TAG)         (multiple-value-setq (rest game-group) (parse-game-group-tag rest game-group)))
-                ((token-type-p token :DESCRIPTION) (multiple-value-setq (rest game-group) (parse-game-group-description rest game-group)))
-                ((token-type-p token :POINTS)      (multiple-value-setq (rest points)     (parse-game-group-points rest)))
-                ((token-type-p token :GAME)        (multiple-value-bind (rest1 game)      (parse-game-group-game rest)
-                                                     (setf rest rest1)
-                                                     (push game games)))
-                (T (error "unexpected token ~a" (first rest)))))
+            do ; (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
+               (cond 
+                 ((token-type-p token :TAG)         (multiple-value-setq (rest game-group) (parse-game-group-tag rest game-group)))
+                 ((token-type-p token :DESCRIPTION) (multiple-value-setq (rest game-group) (parse-game-group-description rest game-group)))
+                 ((token-type-p token :POINTS)      (multiple-value-setq (rest points)     (parse-game-group-points rest)))
+                 ((token-type-p token :GAME)        (multiple-value-bind (rest1 game)      (parse-game-group-game rest)
+                                                      (setf rest rest1)
+                                                      (push game games)))
+                 (T (error "unexpected token ~a" (token-to-string (first rest))))))
       (multiple-value-bind (_ rest2) (consume rest :END)
       (push game-group (edition-game-groups edition))
       (loop for game in games
@@ -101,18 +97,18 @@
 
 (defun parse-game-group-tag (tokens game-group)
   (multiple-value-bind (tag-token rest) (consume tokens :TAG)
-    (push (second tag-token) (game-group-tags game-group))
+    (push (token-literal tag-token) (game-group-tags game-group))
     (values rest game-group)))
 
 (defun parse-game-group-description (tokens game-group)
   (multiple-value-bind (_ rest) (consume tokens :DESCRIPTION)
   (multiple-value-bind (string-token rest2) (consume rest :STRING)
-    (setf (game-group-description game-group) (second string-token))
+    (setf (game-group-description game-group) (token-literal string-token))
     (values rest2 game-group))))
 
 (defun parse-game-group-points (tokens)
   (multiple-value-bind (_ rest) (consume tokens :POINTS)
-  (multiple-value-bind (rest2 numbers) (consume-array rest #'second)
+  (multiple-value-bind (rest2 numbers) (consume-array rest #'token-literal)
     (values rest2 numbers))))
     
 (defun parse-game-group-game (tokens)
@@ -120,7 +116,7 @@
   (multiple-value-bind (token-name rest2) (consume rest :STRING)
   (multiple-value-bind (_ rest3) (consume rest2 :RESULTS)
   (multiple-value-bind (rest4 results) (consume-array rest3 #'parse-participant-ref)
-    (values rest4 (make-game :name (second token-name) :results results)))))))
+    (values rest4 (make-game :name (token-literal token-name) :results results)))))))
 
 
 ; --- Parse PARTICIPANT
@@ -132,7 +128,7 @@
 (defun parse-participant-ref (token)
   (unless (token-type-p token :PARTICIPANT-REF)
     (error "Expected @participant. Got ~a" token))
-  (make-participant-ref :name (second token)))
+  (make-participant-ref :name (token-literal token)))
 
 (defun consume-array (tokens element-parser)
   (let ((elements ()))
@@ -145,10 +141,7 @@
       (values rest3 elements)))))
 
 ; --- Helpers
-(defun token-type-p (token type)
-  (eq (first token) type))
-
-(defun consume (tokens &optional expected-type)
+(defun consume (tokens &optional expected-type) 
   (unless tokens
     (error "Expected a token, got nothing."))
   (let ((token (first tokens)))

@@ -4,6 +4,7 @@
   :serial T
   :components
     ((:file "package")
+     (:file "src/typings/token")
      (:file "src/typings/edition")
      (:file "src/lexer")
      (:file "src/parser")

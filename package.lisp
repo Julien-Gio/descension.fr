@@ -1,3 +1,15 @@
+(defpackage #:token
+  (:use #:cl)
+  
+  (:export #:TOKEN
+           #:make-token
+           #:token-type
+           #:token-lexeme
+           #:token-literal
+           #:token-line
+           #:token-to-string
+           #:token-type-p))
+
 (defpackage #:edition
   (:use #:cl)
   (:export #:EDITION
@@ -27,11 +39,11 @@
            #:game-results))
 
 (defpackage #:parser
-  (:use #:cl #:edition)
+  (:use #:cl #:token #:edition)
   (:export #:parse))
 
 (defpackage #:lexer
-  (:use #:cl)
+  (:use #:cl #:token)
   (:export #:lex
            #:print-tokens))
 

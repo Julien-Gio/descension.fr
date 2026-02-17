@@ -14,7 +14,7 @@
   (format t "~& -----")
 
   (setf tokens (lexer:lex (make-string-input-stream input)))
-  ; (lexer:print-tokens tokens)
+  (lexer:print-tokens tokens)
 
   (format t "~& -----")
 
