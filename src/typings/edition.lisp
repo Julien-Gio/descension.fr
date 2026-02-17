@@ -12,13 +12,12 @@
 (defstruct GAME-GROUP
   (name "")
   (tags nil)
-  (description "")
-  (points nil))
+  (description ""))
 
 (defstruct GAME
   (name "")
   (description "")
-  (group NIL)
+  (parent-group NIL)
   (tags NIL)
   (points NIL)
   (results NIL))

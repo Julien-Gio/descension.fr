@@ -54,7 +54,7 @@
   (multiple-value-bind (start-date rest3) (consume rest2 :DATE)
   (multiple-value-bind (_ rest4) (consume rest3 :TO)
   (multiple-value-bind (end-date rest5) (consume rest4 :DATE)
-    (setf (edition-dates edition) (concatenate 'string (second start-date) ":" (second end-date)))
+    (setf (edition-dates edition) (concatenate 'string (second start-date) ":" (second end-date)))  ; TODO JUL implement date ranges 
     (values rest5 edition)))))))
 
 (defun parse-standing (tokens edition)
@@ -72,25 +72,32 @@
      (T (error "unexpected token after define: ~a" (first rest2)))))))
 
 (defun parse-game-group (tokens edition)
-  (let ((game-group (make-game-group)))
+  (let ((game-group (make-game-group))
+        (points nil)
+        (games nil))
     (multiple-value-bind (name-token rest) (consume tokens :STRING)
       (setf (game-group-name game-group) (second name-token))
       (loop repeat 1000 ; avoid infinite loops
             while (not (token-type-p (first rest) :END))
-            do ; (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
-              (multiple-value-setq (rest game-group) (parse-game-group-field rest game-group)))
+            for token = (first rest)
+            do (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
+              ; NOT WHAT I WANT (multiple-value-setq (rest game-group) (parse-game-group-field rest game-group))
+              (cond 
+                ((token-type-p token :TAG)         (multiple-value-setq (rest game-group) (parse-game-group-tag rest game-group)))
+                ((token-type-p token :DESCRIPTION) (multiple-value-setq (rest game-group) (parse-game-group-description rest game-group)))
+                ((token-type-p token :POINTS)      (multiple-value-setq (rest points)     (parse-game-group-points rest)))
+                ((token-type-p token :GAME)        (multiple-value-bind (rest1 game)      (parse-game-group-game rest)
+                                                     (setf rest rest1)
+                                                     (push game games)))
+                (T (error "unexpected token ~a" (first rest)))))
       (multiple-value-bind (_ rest2) (consume rest :END)
       (push game-group (edition-game-groups edition))
+      (loop for game in games
+            do (setf (game-points game) points)  ; Games inherit points from game-group.
+               (setf (game-parent-group game) (game-group-name game-group)))
+      ; TODO JUL do games tags inherit from game-group?
+      (push games (edition-games edition))
       (values rest2 edition)))))
-
-(defun parse-game-group-field (tokens game-group)
-  (let ((token (first tokens)))
-    (cond 
-      ((token-type-p token :TAG)         (parse-game-group-tag tokens game-group))
-      ((token-type-p token :DESCRIPTION) (parse-game-group-description tokens game-group))
-      ((token-type-p token :POINTS)      (parse-game-group-points tokens game-group))
-      ((token-type-p token :GAME)        (parse-game-group-game tokens game-group))
-      (T (error "unexpected token ~a" (first tokens))))))
 
 (defun parse-game-group-tag (tokens game-group)
   (multiple-value-bind (tag-token rest) (consume tokens :TAG)
@@ -103,19 +110,17 @@
     (setf (game-group-description game-group) (second string-token))
     (values rest2 game-group))))
 
-(defun parse-game-group-points (tokens game-group)
+(defun parse-game-group-points (tokens)
   (multiple-value-bind (_ rest) (consume tokens :POINTS)
   (multiple-value-bind (rest2 numbers) (consume-array rest #'second)
-    (setf (game-group-points game-group) numbers)
-    (values rest2 game-group))))
+    (values rest2 numbers))))
     
-(defun parse-game-group-game (tokens game-group)
+(defun parse-game-group-game (tokens)
   (multiple-value-bind (_ rest) (consume tokens :GAME)
-  (multiple-value-bind (_ rest2) (consume rest :STRING)
+  (multiple-value-bind (token-name rest2) (consume rest :STRING)
   (multiple-value-bind (_ rest3) (consume rest2 :RESULTS)
-  (multiple-value-bind (rest4 _) (consume-array rest3 #'parse-participant-ref)
-    ; TODO
-    (values rest4 game-group))))))
+  (multiple-value-bind (rest4 results) (consume-array rest3 #'parse-participant-ref)
+    (values rest4 (make-game :name (second token-name) :results results)))))))
 
 
 ; --- Parse PARTICIPANT

@@ -16,8 +16,15 @@
            #:make-game-group
            #:game-group-name
            #:game-group-description
-           #:game-group-points
-           #:game-group-tags))
+           #:game-group-tags
+           #:GAME
+           #:make-game
+           #:game-name
+           #:game-description
+           #:game-parent-group
+           #:game-tags
+           #:game-points
+           #:game-results))
 
 (defpackage #:parser
   (:use #:cl #:edition)
