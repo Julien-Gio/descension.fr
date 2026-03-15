@@ -46,6 +46,11 @@
   (:use #:cl #:token)
   (:export #:lex
            #:print-tokens))
+           
+(defpackage #:html
+  (:use #:cl #:edition)
+  (:export #:add-page)
+  (:export #:def-edition-page))
 
 (defpackage #:descension-ssg
   (:use #:cl)

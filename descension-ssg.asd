@@ -8,5 +8,7 @@
      (:file "src/typings/edition")
      (:file "src/lexer")
      (:file "src/parser")
+     (:file "src/html/add-page")
+     (:file "src/html/edition-page")
      (:file "src/main")))
 
