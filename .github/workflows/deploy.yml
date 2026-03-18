@@ -12,17 +12,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install SBCL
+      - name: Build
         run: |
           sudo apt-get update
           sudo apt-get install -y sbcl
-
-      - name: Build site (Lisp)
-        run: |
           sbcl --script run.lisp
 
-      - name: Install Surge
+      - name: Deploy
         run: npm install --global surge
-
-      - name: Deploy to Surge
         run: surge ./output/public --token ${{ secrets.SURGE_TOKEN }}
