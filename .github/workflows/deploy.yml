@@ -19,5 +19,6 @@ jobs:
           sbcl --script run.lisp
 
       - name: Deploy
-        run: npm install --global surge
-        run: surge ./output/public --token ${{ secrets.SURGE_TOKEN }}
+        run: |
+          npm install --global surge
+          surge ./output/public --domain ${{ secrets.SURGE_URL }} --token ${{ secrets.SURGE_TOKEN }}
