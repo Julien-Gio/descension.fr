@@ -21,5 +21,5 @@
   ; (setf data (parser:parse tokens))
   ; (print data)
 
-  (html:add-page "/" "<p>HELLO THERE!</p>"))
+  (load "src/router.lisp"))
 
