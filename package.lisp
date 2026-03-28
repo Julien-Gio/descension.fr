@@ -1,6 +1,5 @@
 (defpackage #:token
   (:use #:cl)
-  
   (:export #:TOKEN
            #:make-token
            #:token-type
@@ -49,8 +48,14 @@
            
 (defpackage #:html
   (:use #:cl #:edition)
-  (:export #:add-page)
-  (:export #:def-edition-page))
+  (:export #:header
+           #:section-header
+           #:add-page
+           #:def-edition-page))
+
+(defpackage #:pages
+  (:use #:cl #:html)
+  (:export #:page-2025))
 
 (defpackage #:descension-ssg
   (:use #:cl)
