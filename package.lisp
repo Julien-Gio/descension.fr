@@ -45,6 +45,10 @@
   (:use #:cl #:token)
   (:export #:lex
            #:print-tokens))
+
+(defpackage #:interpreter
+  (:use #:cl)
+  (:export #:load-content))
            
 (defpackage #:html
   (:use #:cl #:edition)

@@ -1,13 +1,14 @@
 (asdf:defsystem "descension-ssg"
-  :description "Description todo"
+  :description "Static site generator"
   :version "0.0.1"
   :serial T
   :components
     ((:file "package")
      (:file "src/typings/token")
      (:file "src/typings/edition")
-     (:file "src/lexer")
-     (:file "src/parser")
+     (:file "src/interpreter/lexer")
+     (:file "src/interpreter/parser")
+     (:file "src/interpreter/interpreter")
      (:file "src/html/headers")
      (:file "src/html/add-page")
      (:file "src/html/edition-page")

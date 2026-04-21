@@ -1,30 +1,37 @@
 (in-package #:html)
 
 (defmacro def-edition-page (name &body body)
-  (let* ((title-form (assoc 'title body :key #'symbol-name :test #'string=))
+  (let* ((title-form (get-directive body 'title))
          (title (second title-form))
-         (layout-form (assoc 'layout body :key #'symbol-name :test #'string=))
-         (layout (rest layout-form)))
+         (layout-form (get-directive body 'layout))
+         (layout-items (rest layout-form))
+         (use-form (get-directive body 'use ))
+         (edition-filename (second use-form)))
     `(defun ,name ()
-       (let ((html-string (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T)))
+       (let ((html-string (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T))
+             (edition (interpreter:load-content ,edition-filename)))
          (format html-string "~&<html>")
          (format html-string "~&<head>")
          (format html-string "~&<title>~a</title>" ,title)
          (format html-string "~&</head>")
          (format html-string "~&<body>")
-         (format html-string "~&<h1>Edition header ~a</h1>" ,title)
-         ,@(mapcar #'(lambda (x) `(format html-string "~&~a" ,(expand-edition-forms x))) layout)
+         (format html-string "~&<h1>Edition header ~a</h1>" (edition-name edition))
+         ,@layout-items
          (format html-string "~&</body>")
          (format html-string "~&</html>")
          html-string))))
 
-(defun expand-edition-forms (form)
-  (let ((key (symbol-name (first form)))
-        (args (rest form)))
-    (cond ((string= key 'podium) "<p>PODIUM!</p>")
-          ((string= key 'trophies) "<p>TROPHIES TODO!</p>")
-          ((string= key 'header) (format nil "<h2>~a</h2>" (first args)))
-          (T (error (format nil "Wow what is this? ~a" key))))))
+(defmacro podium ()
+  `(format html-string "~&<p>PODIUM!<br/>~a<br/>~a<br/>~a</p>" 
+    (participant-ref-name (first (edition-standing edition)))
+    (participant-ref-name (second (edition-standing edition)))
+    (participant-ref-name (third (edition-standing edition)))))
+
+(defmacro header (content)
+  `(format html-string "~&<h2>~a</h2>" ,content))
+
+(defmacro trophies ()
+  `(format html-string "~&<p>TROPHIES TODO!</p>"))
 
 (defmacro def-participant-page (name participant)
   (let ((participant-points (gethash participant *points* 0)))
@@ -42,3 +49,11 @@
          (format html-string "</body>")
          (format html-string "</html>")
          html-string))))
+
+
+; =================  Helper functions  =================
+
+(defun get-directive (directives directive-symbol-name)
+  (assoc directive-symbol-name directives 
+         :key #'symbol-name 
+         :test #'string=))
