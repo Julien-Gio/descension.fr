@@ -53,7 +53,8 @@
 (defpackage #:html
   (:use #:cl #:edition)
   (:export #:header
-           #:section-header
+           #:podium
+           #:trophies
            #:add-page
            #:def-edition-page))
 

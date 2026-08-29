@@ -8,47 +8,25 @@
          (use-form (get-directive body 'use ))
          (edition-filename (second use-form)))
     `(defun ,name ()
-       (let ((html-string (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T))
-             (edition (interpreter:load-content ,edition-filename)))
-         (format html-string "~&<html>")
-         (format html-string "~&<head>")
-         (format html-string "~&<title>~a</title>" ,title)
-         (format html-string "~&</head>")
-         (format html-string "~&<body>")
-         (format html-string "~&<h1>Edition header ~a</h1>" (edition-name edition))
-         ,@layout-items
-         (format html-string "~&</body>")
-         (format html-string "~&</html>")
-         html-string))))
-
-(defmacro podium ()
-  `(format html-string "~&<p>PODIUM!<br/>~a<br/>~a<br/>~a</p>" 
-    (participant-ref-name (first (edition-standing edition)))
-    (participant-ref-name (second (edition-standing edition)))
-    (participant-ref-name (third (edition-standing edition)))))
+       (let ((edition (interpreter:load-content ,edition-filename)))
+         (render-html (list :html (list :head (list :title ,title)) 
+                                  (list :body (list :h1 "Edition header " (edition-name edition)) 
+                                              ,@layout-items)))))))
 
 (defmacro header (content)
-  `(format html-string "~&<h2>~a</h2>" ,content))
+  `(list :h2 ,content))
+
+(defmacro podium ()
+  `(list :p "PODIUM!" 
+      (list :br) 
+      (participant-ref-name (first (edition-standing edition)))
+      (list :br)
+      (participant-ref-name (second (edition-standing edition)))
+      (list :br)
+      (participant-ref-name (third (edition-standing edition)))))
 
 (defmacro trophies ()
-  `(format html-string "~&<p>TROPHIES TODO!</p>"))
-
-(defmacro def-participant-page (name participant)
-  (let ((participant-points (gethash participant *points* 0)))
-    `(defun ,name ()
-       (let ((html-string (make-array 0 :element-type 'character :fill-pointer 0 :adjustable T))
-             (level (if (> ,participant-points 50) "great" "bad")))
-         (format html-string "<html>")
-         (format html-string "<head>")
-         (format html-string "<title>~a</title>" ,participant)
-         (format html-string "</head>")
-         (format html-string "<body>")
-         (format html-string "<h1>~a's home</h1>" ,participant)
-         (format html-string "<p>This is a ~a player.</p><br/>" level)
-         (format html-string "<p>This mf has <em>~a</em> points!</p>" ,participant-points)
-         (format html-string "</body>")
-         (format html-string "</html>")
-         html-string))))
+  `(list :p "TROPHIES TODO"))
 
 
 ; =================  Helper functions  =================
