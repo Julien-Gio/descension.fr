@@ -1,0 +1,40 @@
+.podium {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.podium-top-3 {
+  display: flex;
+  align-items: end;
+}
+.podium-top-3 > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-left: 0.2em;
+  margin-right: 0.2em;
+}
+.podium-step {
+  width: 100px;
+}
+.gold .podium-step {
+  height: 80px;
+  background-color: gold;
+}
+.silver .podium-step {
+  height: 50px;
+  background-color: silver;
+}
+.bronze .podium-step {
+  height: 30px;
+  background-color: brown;
+}
+.podium .rest-of-stadings p {
+  display: inline;
+  margin-right: 1em;
+}
+.podium .rest-of-stadings p::before {
+  content: attr(data-position) ".";
+  opacity: 0.6;
+  margin-right: 0.1em;
+}

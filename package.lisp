@@ -52,7 +52,8 @@
            
 (defpackage #:html
   (:use #:cl #:edition)
-  (:export #:header
+  (:export #:copy-assets-to-build-output
+           #:header
            #:podium
            #:trophies
            #:add-page

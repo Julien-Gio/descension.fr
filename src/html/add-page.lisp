@@ -1,5 +1,7 @@
 (in-package #:html)
 
+(defparameter *assets-path* "assets")
+
 (defparameter *build-path* "output/public")
 
 (defmacro add-page (route html)
@@ -16,3 +18,19 @@
                        :if-exists :supersede
                        :if-does-not-exist :create)
       (format str ,html)))))
+
+(defun copy-assets-to-build-output ()
+  (copy-directory *assets-path* (concatenate 'string *build-path* "/assets")))
+
+(defun copy-directory (src dest)
+  (let ((src-dir (uiop:ensure-directory-pathname src))
+        (dest-dir (uiop:ensure-directory-pathname dest)))
+    (ensure-directories-exist dest-dir)
+    (loop for file in (uiop:directory-files src-dir) 
+          do (format T "~&COPY ~a" file)
+          do (uiop:copy-file file (make-pathname :name (pathname-name file) 
+                                                 :type (pathname-type file) 
+                                                 :defaults dest-dir)))
+    (loop for subdir in (uiop:subdirectories src-dir)
+          for dest-subdir = (merge-pathnames (car (last (pathname-directory subdir))) dest-dir)
+          do (copy-directory subdir dest-subdir))))
