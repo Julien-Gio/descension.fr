@@ -29,11 +29,11 @@
   height: 30px;
   background-color: brown;
 }
-.podium .rest-of-stadings p {
+.podium .rest-of-standings p {
   display: inline;
   margin-right: 1em;
 }
-.podium .rest-of-stadings p::before {
+.podium .rest-of-standings p::before {
   content: attr(data-position) ".";
   opacity: 0.6;
   margin-right: 0.1em;
