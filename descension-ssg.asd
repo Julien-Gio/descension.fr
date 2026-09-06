@@ -6,6 +6,7 @@
     ((:file "package")
      (:file "src/typings/token")
      (:file "src/typings/edition")
+     (:file "src/typings/game-group")
      (:file "src/interpreter/lexer")
      (:file "src/interpreter/parser")
      (:file "src/interpreter/interpreter")

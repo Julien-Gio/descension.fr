@@ -35,7 +35,9 @@
            #:game-tags
            #:game-points
            #:game-points-identifier
-           #:game-results))
+           #:game-results
+           #:participant-points-for-games
+           #:participant-points-for-game))
 
 (defpackage #:parser
   (:use #:cl #:token #:edition)

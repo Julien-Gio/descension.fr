@@ -37,13 +37,19 @@
 
 (defmacro leaderboard ()
   `(list :div '(:attrs :class "leaderboard")
-         (list :table 
-               (append (list :tr '(:th) '(:th) '(:th)) 
-                       (loop for gg in (edition-game-groups edition)
-                             collect (list :th (game-group-name gg))))
-               (append (list :tr '(:td "1er") '(:td "Parapluie") '(:td "100pts"))
-                       (loop for gg in (edition-game-groups edition) collect (list :td "?"))))))
-
+         (list :table
+               (append (list :tr '(:th) '(:th) '(:th))
+                 (loop for gg in (edition-game-groups edition)
+                       collect (list :th (game-group-name gg))))
+               (loop for p in (edition-standing edition)
+                     for i from 1
+                     for p-name = (participant-ref-name p)
+                     collect (append (list :tr
+                                           (list :td i)
+                                           (list :td p-name)
+                                           (list :td (participant-points-for-games (edition-games edition) p-name)))
+                              (loop for gg in (edition-game-groups edition)
+                                    collect (list :td "?")))))))
 (defmacro trophies ()
   `(list :p "TROPHIES TODO"))
 

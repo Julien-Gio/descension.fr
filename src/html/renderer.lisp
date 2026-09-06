@@ -8,6 +8,7 @@
 
 (defun write-node (node out)
   (cond ((null node) #| Do nothing |#)
+        ((numberp node) (write-string (escape-html (write-to-string node)) out))
         ((stringp node) (write-string (escape-html node) out))
         ((keywordp (first node)) (write-tag node out))
         (T (loop for sub-node in node do (write-node sub-node out)))))

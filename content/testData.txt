@@ -22,7 +22,7 @@ define game-group "Équipes" #team-games
 	points "multi" +4
 	game "Blaze Rush (1)"
 	     points "multi" 
-		 results [@Pastaga   @Otho      @Lintendo @404]
+		 results [@Parapluie @Dua       @P.M      @Catapulte]
 	game "Blaze Rush (2)" 
 	     points "multi" 
 		 results [@Pastaga   @Otho      @Lintendo @404]
