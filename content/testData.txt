@@ -10,6 +10,24 @@ This is a multi-line text example.
 define game-group "FFA (4 joueurs)" #individual-games
 	description "Règles : chaque canditat joue à 4 jeux dans la liste."
 	points [+5 +3 +2 +1]
-	game "Blaze Rush" results   [@Pastaga   @Otho      @Lintendo @404]
-	game "Tricky Tower" results [@P.M       @Catapulte @Dua      @Barbeer]
+	game "Blaze Rush" 
+	     results [@Pastaga   @Otho      @Lintendo @404]
+	game "Tricky Tower"
+	     results [@P.M       @Catapulte @Dua      @Barbeer]
 end
+
+define game-group "Équipes" #team-games
+	description "TODO"
+	points "single" +6
+	points "multi" +4
+	game "Blaze Rush (1)"
+	     points "multi" 
+		 results [@Pastaga   @Otho      @Lintendo @404]
+	game "Blaze Rush (2)" 
+	     points "multi" 
+		 results [@Pastaga   @Otho      @Lintendo @404]
+	game "Tricky Tower" 
+	     points "single"
+		 results [@P.M       @Catapulte @Dua      @Barbeer]
+end
+

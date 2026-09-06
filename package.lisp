@@ -31,10 +31,10 @@
            #:GAME
            #:make-game
            #:game-name
-           #:game-description
            #:game-parent-group
            #:game-tags
            #:game-points
+           #:game-points-identifier
            #:game-results))
 
 (defpackage #:parser
@@ -55,6 +55,7 @@
   (:export #:copy-assets-to-build-output
            #:header
            #:podium
+           #:leaderboard
            #:trophies
            #:add-page
            #:def-edition-page))

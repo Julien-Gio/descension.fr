@@ -70,7 +70,7 @@
 
 (defun parse-game-group (tokens edition)
   (let ((game-group (make-game-group))
-        (points nil)
+        (points (make-hash-table :test 'equal))
         (games nil))
     (multiple-value-bind (name-token rest) (consume tokens :STRING)
       (setf (game-group-name game-group) (token-literal name-token))
@@ -79,11 +79,13 @@
             for token = (first rest)
             do ; (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
                (cond 
-                 ((token-type-p token :TAG)         (multiple-value-setq (rest game-group) (parse-game-group-tag rest game-group)))
-                 ((token-type-p token :DESCRIPTION) (multiple-value-setq (rest game-group) (parse-game-group-description rest game-group)))
-                 ((token-type-p token :POINTS)      (multiple-value-setq (rest points)     (parse-game-group-points rest)))
-                 ((token-type-p token :GAME)        (multiple-value-bind (rest1 game)      (parse-game-group-game rest)
-                                                      (setf rest rest1)
+                 ((token-type-p token :TAG)         (multiple-value-setq (rest game-group)          (parse-game-group-tag rest game-group)))
+                 ((token-type-p token :DESCRIPTION) (multiple-value-setq (rest game-group)          (parse-game-group-description rest game-group)))
+                 ((token-type-p token :POINTS)      (multiple-value-bind (restTemp key pointValues) (parse-game-group-points rest)
+                                                      (setf rest restTemp)
+                                                      (setf (gethash key points) pointValues)))
+                 ((token-type-p token :GAME)        (multiple-value-bind (restTemp game)   (parse-game rest)
+                                                      (setf rest restTemp)
                                                       (push game games)))
                  (T (error "unexpected token ~a" (token-to-string (first rest))))))
       (multiple-value-bind (_ rest2) (consume rest :END)
@@ -107,16 +109,57 @@
     (values rest2 game-group))))
 
 (defun parse-game-group-points (tokens)
+  (let ((identifier nil)
+        (value nil))
   (multiple-value-bind (_ rest) (consume tokens :POINTS)
-  (multiple-value-bind (rest2 numbers) (consume-array rest #'token-literal)
-    (values rest2 numbers))))
+    ; identifier (optionnal, defaults to nil)
+    (when (token-type-p (first rest) :STRING) 
+      (multiple-value-bind (identifierToken restTemp) (consume rest :STRING)
+        (setf rest restTemp)
+        (setf identifier (token-literal identifierToken))))
+
+    ; a number OR an array of numbers
+    (cond 
+      ((token-type-p (first rest) :NUMBER) (multiple-value-bind (valueToken restTemp) (consume rest :NUMBER)
+                                             (setf rest restTemp)
+                                             (setf value (token-literal valueToken))))
+      ((token-type-p (first rest) :OPEN_BRACKET) (multiple-value-setq (rest value) (consume-array rest #'token-literal)))
+      (T (error "unexpected token ~a" (token-to-string (first rest)))))
+    (values rest identifier value))))
     
-(defun parse-game-group-game (tokens)
+(defun parse-game-group-gameOLD (tokens)
   (multiple-value-bind (_ rest) (consume tokens :GAME)
   (multiple-value-bind (token-name rest2) (consume rest :STRING)
   (multiple-value-bind (_ rest3) (consume rest2 :RESULTS)
   (multiple-value-bind (rest4 results) (consume-array rest3 #'parse-participant-ref)
     (values rest4 (make-game :name (token-literal token-name) :results results)))))))
+    
+(defun parse-game (tokens)
+  (multiple-value-bind (_ rest) (consume tokens :GAME)
+  (multiple-value-bind (token-name rest) (consume rest :STRING)
+      (let ((game (make-game :name (token-literal token-name))))
+      (loop repeat 1000 ; avoid infinite loops
+            while (not (token-type-p (first rest) :END))
+            for token = (first rest)
+            do (cond 
+                 ((token-type-p token :POINTS)  (multiple-value-setq (rest game) (parse-game-points-identifier rest game)))
+                 ((token-type-p token :RESULTS) (multiple-value-setq (rest game) (parse-game-results rest game)))
+                 (T (loop-finish))))
+      (values rest game))
+    )))
+
+(defun parse-game-points-identifier (tokens game) 
+  (multiple-value-bind (_ rest) (consume tokens :POINTS)
+  (multiple-value-bind (string-token rest) (consume rest :STRING)
+    (setf (game-points-identifier game) (token-literal string-token))
+    (values rest game))))
+
+
+(defun parse-game-results (tokens game) 
+  (multiple-value-bind (_ rest) (consume tokens :RESULTS)
+  (multiple-value-bind (rest results) (consume-array rest #'parse-participant-ref)
+    (setf (game-results game) results)
+    (values rest game))))
 
 
 ; --- Parse PARTICIPANT

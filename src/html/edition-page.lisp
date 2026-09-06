@@ -10,7 +10,7 @@
     `(defun ,name ()
        (let ((edition (interpreter:load-content ,edition-filename)))
          (render-html (list :html (list :head (list :title ,title)
-                                        (list :link '(:attrs :href "/assets/edition.css" :rel "stylesheet")))
+                                        (list :link '(:attrs :href "../../assets/edition.css" :rel "stylesheet")))
                             (list :body (list :h1 "Edition header " (edition-name edition))
                                   ,@layout-items)))))))
 
@@ -34,6 +34,15 @@
                  for i from 4
                  collect (list :p (list :attrs :data-position (format nil "~d" i))
                                (participant-ref-name p))))))
+
+(defmacro leaderboard ()
+  `(list :div '(:attrs :class "leaderboard")
+         (list :table 
+               (append (list :tr '(:th) '(:th) '(:th)) 
+                       (loop for gg in (edition-game-groups edition)
+                             collect (list :th (game-group-name gg))))
+               (append (list :tr '(:td "1er") '(:td "Parapluie") '(:td "100pts"))
+                       (loop for gg in (edition-game-groups edition) collect (list :td "?"))))))
 
 (defmacro trophies ()
   `(list :p "TROPHIES TODO"))

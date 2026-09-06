@@ -16,9 +16,9 @@
 
 (defstruct GAME
   (name "")
-  (description "")
   (parent-group NIL)
   (tags NIL)
+  (points-identifier NIL)
   (points NIL)
   (results NIL))
 

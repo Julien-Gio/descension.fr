@@ -7,6 +7,8 @@
   (layout
     (header "Podium")
     (podium)
+    (header "Leaderboard")
+    (leaderboard)
     (header "End of page")))
 
 
