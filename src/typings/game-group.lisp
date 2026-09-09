@@ -13,6 +13,9 @@
   (points NIL)
   (results NIL))
 
+(defun games-in-group (all-games game-group-name)
+  (remove-if-not (lambda (g) (equal game-group-name (game-parent-group g))) all-games))
+
 (defun participant-points-for-games (games participant-name)
   (loop for game in games
           sum (participant-points-for-game game participant-name)))

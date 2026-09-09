@@ -9,6 +9,8 @@
     (podium)
     (header "Leaderboard")
     (leaderboard)
+    (game-group-details "FFA (4 joueurs)")
+    (game-group-details "Équipes")
     (header "End of page")))
 
 

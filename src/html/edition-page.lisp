@@ -37,22 +37,38 @@
 
 (defmacro leaderboard ()
   `(list :div '(:attrs :class "leaderboard")
-         (list :table
-               (append (list :tr '(:th) '(:th) '(:th))
-                 (loop for gg in (edition-game-groups edition)
-                       collect (list :th (game-group-name gg))))
-               (loop for p in (edition-standing edition)
-                     for i from 1
-                     for p-name = (participant-ref-name p)
-                     collect (append (list :tr
-                                           (list :td i)
-                                           (list :td p-name)
-                                           (list :td (participant-points-for-games (edition-games edition) p-name)))
-                              (loop for gg in (edition-game-groups edition)
-                                    collect (list :td "?")))))))
+         (let* ((game-groups (loop for gg in (edition-game-groups edition) collect (game-group-name gg)))
+                (participant-points (loop for p in (edition-standing edition)
+                                          for i from 1
+                                          for p-name = (participant-ref-name p)
+                                          collect (append (list i p-name (participant-points-for-games (edition-games edition) p-name))
+                                                    (loop for gg in (edition-game-groups edition)
+                                                          for group-games = (games-in-group (edition-games edition) (game-group-name gg))
+                                                          collect (participant-points-for-games group-games p-name))))))
+           (html-table (append '(nil nil nil) game-groups) participant-points))))
+
 (defmacro trophies ()
   `(list :p "TROPHIES TODO"))
 
+(defmacro game-group-details (group-name)
+  `(list :div '(:attrs :class "game-group-details")
+         (let* ((participant-names (loop for p in (edition-standing edition) collect (participant-ref-name p)))
+                (all-games (edition-games edition))
+                (group-games (remove-if-not (lambda (g) (equal ,group-name (game-parent-group g))) all-games))
+                (points-per-game (loop for g in group-games
+                                       collect (append (list (game-name g))
+                                                 (loop for p in (edition-standing edition)
+                                                       collect (participant-points-for-game g (participant-ref-name p)))))))
+           (html-table (append (list ,group-name) participant-names)
+             points-per-game))))
+
+(defun html-table (header-cells data-rows)
+  (list :table
+        (append (list :tr) (loop for h in header-cells collect (list :th h)))
+        (loop for row in data-rows
+              collect (append (list :tr)
+                        (loop for data-cell in row
+                              collect (list :td data-cell))))))
 
 ; =================  Helper functions  =================
 

@@ -36,6 +36,7 @@
            #:game-points
            #:game-points-identifier
            #:game-results
+           #:games-in-group
            #:participant-points-for-games
            #:participant-points-for-game))
 
@@ -59,6 +60,7 @@
            #:podium
            #:leaderboard
            #:trophies
+           #:game-group-details
            #:add-page
            #:def-edition-page))
 
