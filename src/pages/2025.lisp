@@ -9,8 +9,10 @@
     (podium)
     (header "Leaderboard")
     (leaderboard)
-    (game-group-details "FFA (4 joueurs)")
+    (game-group-details "FFA")
     (game-group-details "Équipes")
+    (game-group-details "Le Bocal")
+    (game-group-details "Quiz Pompe")
     (header "End of page")))
 
 
