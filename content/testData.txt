@@ -86,19 +86,19 @@ end
 define tournament "Tournoi"
 	description "This is a tournoi"
 	points [+18 +15 +12 +9 +6 +3 +1]
-	winners-bracket set "huitième" [[@Catapulte @Dua]]
-	winners-bracket set "quarts" [
+	winners-bracket set "Huitièmes" [[@Catapulte @Dua]]
+	winners-bracket set "Quarts" [
 	  [@404 @Catapulte]
 	  [@Parapluie @Barbeer]
 	  [@P.M @Lintendo]
 	  [@Otho @Pastaga]
 	]
-	winners-bracket set "demi"   [[@404 @Parapluie] [@P.M @Otho]]
-	winners-bracket set "finale" [[@P.M @Parapuie]]
-	winners-bracket set "grande finale" [[@P.M @404]]
-	losers-bracket set "huitième" [[@Dua @Pastaga]]
-	losers-bracket set "quarts" [[@Lintendo @Dua] [@Catapulte @Barbeer]]
-	losers-bracket set "demi" [[@404 @Lintendo] [@Catapulte @Otho]]
-	losers-bracket set "finale" [[@404 @Catapulte]]
-	losers-bracket set "repêche" [[@404 @Parapluie]]
+	winners-bracket set "Demi"   [[@404 @Parapluie] [@P.M @Otho]]
+	winners-bracket set "Finale" [[@P.M @Parapuie]]
+	losers-bracket set "Seizièmes" [[@Dua @Pastaga]]
+	losers-bracket set "Huitièmes" [[@Lintendo @Dua] [@Catapulte @Barbeer]]
+	losers-bracket set "Quarts" [[@404 @Lintendo] [@Catapulte @Otho]]
+	losers-bracket set "Demi" [[@404 @Catapulte]]
+	losers-bracket set "Finale" [[@404 @Parapluie]]
+	final-bracket set "Grande finale" [@P.M @404]
 end

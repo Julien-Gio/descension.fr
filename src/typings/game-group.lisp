@@ -18,7 +18,8 @@
   (parent-group NIL)
   (points NIL)
   (winners-brackets NIL)
-  (losers-brackets NIL))
+  (losers-brackets NIL)
+  (final-bracket NIL))
 
 (defstruct TOURNAMENT-BRACKET
   (name "")
@@ -42,3 +43,8 @@
      ((numberp points) points)
      ((listp points) (or (nth ranking points) 0))
      (T (error "unhandled points format in game ~a" (game-name game))))))
+
+(defun find-tournament-by-group-name (name edition)
+  (loop for tournament in (edition-tournaments edition)
+        when (equal name (tournament-parent-group tournament))
+          return tournament))

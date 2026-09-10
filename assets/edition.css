@@ -38,3 +38,162 @@
   opacity: 0.6;
   margin-right: 0.1em;
 }
+
+/* TOURNAMENT */
+h3.tournament-section-header{
+	font-size:14px;
+	text-transform:uppercase;
+	letter-spacing:1px;
+	color:#555;
+	margin:26px 0 8px;
+}
+
+.bracket-grid {
+	display: grid;
+	grid-auto-flow: column;
+	overflow: auto;
+	line-height: 1;
+	max-width:100%;
+}
+
+.bracket-line,
+.bracket-spacer {
+	text-align: center;
+	height: 100%;
+}
+
+.bracket-line {
+	white-space: nowrap;
+}
+
+.bracket-grid-header,
+.bracket {
+	grid-row: span 2;
+	display: table;
+	border: 1px solid gray;
+	border-radius: 2px;
+	height: 100%;
+	width: 100%;
+	box-sizing: border-box;
+}
+
+.bracket.top {
+	border-radius: 8px 8px 0 0;
+}
+
+.bracket.bottom {
+	border-radius: 0 0 8px 8px;
+  margin-top: -1px;
+}
+
+.bracket-grid-header {
+	border: 1px solid gray;
+	background: lightblue;
+	text-align: center;
+}
+
+.bracket-header-content,
+.bracket-name,
+.bracket-points {
+	display: table-cell;
+	vertical-align: middle;
+}
+
+.bracket-name {
+	padding: 4px 6px;
+	min-width: 4em;
+	max-width: 0;
+	word-wrap: break-word;
+}
+
+.bracket-points {
+	background-color: hsl(0, 5%, 92%);
+	width: 2em;
+	min-width: 2em;
+	text-align: center;
+	border-left: 8px solid hsl(0, 5%, 85%);
+	padding-left: 0;
+	padding-right: 0;
+	border-radius: inherit;
+	border-top-left-radius: 0;
+	border-bottom-left-radius: 0;
+}
+
+.bracket-line::after,
+.bracket-line::before {
+	width: calc(50% + 2px);
+	height: calc(100% + 2px);
+	box-sizing: border-box;
+	display: inline-block;
+	margin: -1px;
+	border: 0 solid black;
+}
+
+.bracket-line.horizontal::before{
+	content:"";
+	border-width: 0 0 2px 0;
+	width: calc(100% + 2px);
+}
+
+.bracket-line.t-down::after {
+	content: "";
+	border-width: 2px 0 2px 2px;
+	border-radius: 0 0 0 2px;
+}
+
+.bracket-line.t-down::before {
+	content: "";
+	border-width: 2px 2px 0 0;
+	border-bottom: 2px solid transparent;
+}
+
+.bracket-line.z-down::after {
+	content: "";
+	border-width: 0 0 2px 2px;
+	border-top: 2px solid transparent;
+	border-radius: 0 0 0 2px;
+}
+
+.bracket-line.z-down::before {
+	content: "";
+	border-width: 2px 2px 0 0;
+	border-bottom: 2px solid transparent;
+	border-radius: 0 2px 0 0;
+}
+
+.bracket-line.z-up::after {
+	content: "";
+	border-width: 2px 0 0 2px;
+	border-bottom: 2px solid transparent;
+	border-radius: 2px 0 0 0;
+}
+
+.bracket-line.z-up::before {
+	content: "";
+	border-width: 0 2px 2px 0;
+	border-top: 2px solid transparent;
+	border-radius: 0 0 2px 0;
+}
+
+.bracket-winner {
+	font-weight: bold;
+}
+.bracket-winner .bracket-points{
+	color:black;
+}
+
+.round1 { grid-column: 2; }
+.round2 { grid-column: 4; }
+.round3 { grid-column: 6; }
+.round4 { grid-column: 8; }
+.round5 { grid-column: 10; }
+
+.bracket-line.round1 { grid-column: 3; }
+.bracket-line.round2 { grid-column: 5; }
+.bracket-line.round3 { grid-column: 7; }
+.bracket-line.round4 { grid-column: 9; }
+
+.wb .bracket-grid-header{background:#cfe3ff;}
+.lb .bracket-grid-header{background:#ffe1cf;}
+
+.gf-grid .bracket{max-width:14em;}

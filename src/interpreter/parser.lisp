@@ -1,8 +1,5 @@
 (in-package #:parser)
 
-(defmacro push-end (place element)
-  `(setf ,place (append ,place (list ,element))))
-
 ; ---
 
 (defun parse (tokens)
@@ -176,6 +173,9 @@
                ((token-type-p token :LOSERS_BRACKET) (multiple-value-bind (restTemp brackets) (parse-brackets rest)
                                                        (setf rest restTemp)
                                                        (push-end brackets (tournament-losers-brackets tournament))))
+               ((token-type-p token :FINAL_BRACKET) (multiple-value-bind (restTemp bracket) (parse-final-bracket rest)
+                                                      (setf rest restTemp)
+                                                      (setf (tournament-final-bracket tournament) bracket)))
                (T (error "unexpected token ~a" (token-to-string (first rest))))))
       (multiple-value-bind (_ rest) (consume rest :END)
         (push-end game-group (edition-game-groups edition))
@@ -196,10 +196,17 @@
             (multiple-value-bind (_ rest) (consume rest :CLOSE_BRACKET)
               (values rest brackets))))))))
 
+(defun parse-final-bracket (tokens)
+  (multiple-value-bind (_ rest) (consume tokens :FINAL_BRACKET)
+    (multiple-value-bind (_ rest) (consume rest :SET)
+      (multiple-value-bind (name-token rest) (consume rest :STRING)
+        (multiple-value-bind (rest bracket) (parse-bracket rest (token-literal name-token))
+          (values rest bracket))))))
+
 (defun parse-bracket (tokens name)
   (let ((bracket (make-tournament-bracket :name name)))
     (multiple-value-bind (rest participants) (consume-array tokens #'parse-participant-ref)
-      (setf (tournament-bracket-participants bracket) participants)
+      (setf (tournament-bracket-participants bracket) (sort (copy-list participants) #'string< :key #'participant-ref-name))
       (setf (tournament-bracket-winner bracket) (first participants))
       (setf (tournament-bracket-loser bracket) (second participants))
       (values rest bracket))))
@@ -220,7 +227,8 @@
     (multiple-value-bind (_ rest) (consume tokens :OPEN_BRACKET)
       (loop while (not (token-type-p (first rest) :CLOSE_BRACKET))
             do (multiple-value-bind (element rest2) (consume rest)
-                 (push-end elements (funcall element-parser element))
+                 (let ((parsed-element (funcall element-parser element)))
+                   (push-end parsed-element elements))
                  (setf rest rest2)))
       (multiple-value-bind (_ rest3) (consume rest :CLOSE_BRACKET)
         (values rest3 elements)))))

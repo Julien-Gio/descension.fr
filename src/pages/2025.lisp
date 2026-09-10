@@ -11,6 +11,7 @@
     (leaderboard)
     (game-group-details "FFA")
     (game-group-details "Équipes")
+    (tournament "Tournoi")
     (game-group-details "Le Bocal")
     (game-group-details "Quiz Pompe")
     (header "End of page")))

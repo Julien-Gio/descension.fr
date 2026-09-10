@@ -1,6 +1,7 @@
 (defpackage #:utils
   (:use #:cl)
-  (:export #:push-end))
+  (:export #:push-end
+           #:write-repeated-string))
 
 (defpackage #:token
   (:use #:cl #:utils)
@@ -50,12 +51,14 @@
            #:tournament-points
            #:tournament-winners-brackets
            #:tournament-losers-brackets
+           #:tournament-final-bracket
            #:TOURNAMENT-BRACKET
            #:make-tournament-bracket
            #:tournament-bracket-name
            #:tournament-bracket-participants
            #:tournament-bracket-winner
-           #:tournament-bracket-loser))
+           #:tournament-bracket-loser
+           #:find-tournament-by-group-name))
 
 (defpackage #:parser
   (:use #:cl #:utils #:token #:edition)
@@ -77,6 +80,7 @@
            #:podium
            #:leaderboard
            #:trophies
+           #:tournament
            #:game-group-details
            #:add-page
            #:def-edition-page))
