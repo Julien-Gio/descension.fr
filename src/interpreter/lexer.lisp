@@ -141,10 +141,13 @@
           ((equal lexeme "description") (make-token :type :DESCRIPTION :lexeme lexeme :line line-num))
           ((equal lexeme "dates") (make-token :type :DATES :lexeme lexeme :line line-num))
           ((equal lexeme "game-group") (make-token :type :GAME-GROUP :lexeme lexeme :line line-num))
+          ((equal lexeme "tournament") (make-token :type :TOURNAMENT :lexeme lexeme :line line-num))
           ((equal lexeme "points") (make-token :type :POINTS :lexeme lexeme :line line-num))
           ((equal lexeme "game") (make-token :type :GAME :lexeme lexeme :line line-num))
           ((equal lexeme "results") (make-token :type :RESULTS :lexeme lexeme :line line-num))
           ((equal lexeme "set") (make-token :type :SET :lexeme lexeme :line line-num))
+          ((equal lexeme "winners-bracket") (make-token :type :WINNERS_BRACKET :lexeme lexeme :line line-num))
+          ((equal lexeme "losers-bracket") (make-token :type :LOSERS_BRACKET :lexeme lexeme :line line-num))
           (T (make-token :type :IDENTIFIER :lexeme lexeme :line line-num)))))
 
 ; DATE: "(" DIGIT DIGIT DIGIT DIGIT "-" DIGIT DIGIT "-" DIGIT DIGIT ")"

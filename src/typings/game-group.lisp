@@ -3,7 +3,7 @@
 (defstruct GAME-GROUP
   (format "standard") ; can be one of [standard, tournament]
   (name "")
-  (tags nil)
+  (tags NIL)
   (description ""))
 
 (defstruct GAME

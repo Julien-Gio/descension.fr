@@ -74,14 +74,31 @@ end
 define game-group "Le Bocal" #individual-games
 	description "TODO"
 	points [+5 +4 +3 +2 +1]
-	game "" 
-	     results [@Parapluie @404 @Otho @P.M @Lintendo]
+	game "" results [@Parapluie @404 @Otho @P.M @Lintendo]
 end
 
 define game-group "Quiz Pompe" #individual-games
 	description "TODO"
 	points [+12 +10 +8 +7 +6 +5 +4 +3 +2 +1]
-	game "" 
-	     results [@Parapluie @404 @JMM @Pastaga @Lintendo @Otho @Dua @Catapulte @Barbeer @P.M]
+	game "" results [@Parapluie @404 @JMM @Pastaga @Lintendo @Otho @Dua @Catapulte @Barbeer @P.M]
 end
 
+define tournament "Tournoi"
+	description "This is a tournoi"
+	points [+18 +15 +12 +9 +6 +3 +1]
+	winners-bracket set "huitième" [[@Catapulte @Dua]]
+	winners-bracket set "quarts" [
+	  [@404 @Catapulte]
+	  [@Parapluie @Barbeer]
+	  [@P.M @Lintendo]
+	  [@Otho @Pastaga]
+	]
+	winners-bracket set "demi"   [[@404 @Parapluie] [@P.M @Otho]]
+	winners-bracket set "finale" [[@P.M @Parapuie]]
+	winners-bracket set "grande finale" [[@P.M @404]]
+	losers-bracket set "huitième" [[@Dua @Pastaga]]
+	losers-bracket set "quarts" [[@Lintendo @Dua] [@Catapulte @Barbeer]]
+	losers-bracket set "demi" [[@404 @Lintendo] [@Catapulte @Otho]]
+	losers-bracket set "finale" [[@404 @Catapulte]]
+	losers-bracket set "repêche" [[@404 @Parapluie]]
+end

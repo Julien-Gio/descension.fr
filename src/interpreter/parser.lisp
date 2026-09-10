@@ -62,10 +62,11 @@
 
 (defun parse-define-block (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :DEFINE)
-    (multiple-value-bind (define-type rest2) (consume rest)
+    (multiple-value-bind (define-type rest) (consume rest)
       (cond
        ; TODO ((token-type-p define-type :GAME) (parse-game rest2 edition))
-       ((token-type-p define-type :GAME-GROUP) (parse-game-group rest2 edition))
+       ((token-type-p define-type :GAME-GROUP) (parse-game-group rest edition))
+       ((token-type-p define-type :TOURNAMENT) (parse-tournament rest edition))
        (T (error "unexpected token after define: ~a" (token-to-string define-type)))))))
 
 (defun parse-game-group (tokens edition)
@@ -153,6 +154,55 @@
       (setf (game-results game) results)
       (values rest game))))
 
+(defun parse-tournament (tokens edition)
+  (let ((game-group (make-game-group :format "tournament"))
+        (tournament (make-tournament)))
+    (multiple-value-bind (name-token rest) (consume tokens :STRING)
+      (setf (game-group-name game-group) (token-literal name-token))
+      (setf (tournament-parent-group tournament) (token-literal name-token))
+      (loop repeat 1000 ; avoid infinite loops
+            while (not (token-type-p (first rest) :END))
+            for token = (first rest)
+            do ; (format T "~& Parsing GG (~a): ~a" (length rest) (first rest)) 
+              (cond
+               ((token-type-p token :TAG) (multiple-value-setq (rest game-group) (parse-game-group-tag rest game-group)))
+               ((token-type-p token :DESCRIPTION) (multiple-value-setq (rest game-group) (parse-game-group-description rest game-group)))
+               ((token-type-p token :POINTS) (multiple-value-bind (restTemp _ pointValues) (parse-game-group-points rest)
+                                               (setf rest restTemp)
+                                               (setf (tournament-points tournament) pointValues)))
+               ((token-type-p token :WINNERS_BRACKET) (multiple-value-bind (restTemp brackets) (parse-brackets rest)
+                                                        (setf rest restTemp)
+                                                        (push-end brackets (tournament-winners-brackets tournament))))
+               ((token-type-p token :LOSERS_BRACKET) (multiple-value-bind (restTemp brackets) (parse-brackets rest)
+                                                       (setf rest restTemp)
+                                                       (push-end brackets (tournament-losers-brackets tournament))))
+               (T (error "unexpected token ~a" (token-to-string (first rest))))))
+      (multiple-value-bind (_ rest) (consume rest :END)
+        (push-end game-group (edition-game-groups edition))
+        (push-end tournament (edition-tournaments edition))
+        (values rest edition)))))
+
+(defun parse-brackets (tokens)
+  (let ((brackets ()))
+    (multiple-value-bind (_ rest) (consume tokens '(:WINNERS_BRACKET :LOSERS_BRACKET))
+      (multiple-value-bind (_ rest) (consume rest :SET)
+        (multiple-value-bind (name-token rest) (consume rest :STRING)
+          (multiple-value-bind (_ rest) (consume rest :OPEN_BRACKET)
+            (loop repeat 1000 ; avoid infinte loops
+                  while (not (token-type-p (first rest) :CLOSE_BRACKET))
+                  do (multiple-value-bind (restTemp bracket) (parse-bracket rest (token-literal name-token))
+                       (setf rest restTemp)
+                       (push bracket brackets)))
+            (multiple-value-bind (_ rest) (consume rest :CLOSE_BRACKET)
+              (values rest brackets))))))))
+
+(defun parse-bracket (tokens name)
+  (let ((bracket (make-tournament-bracket :name name)))
+    (multiple-value-bind (rest participants) (consume-array tokens #'parse-participant-ref)
+      (setf (tournament-bracket-participants bracket) participants)
+      (setf (tournament-bracket-winner bracket) (first participants))
+      (setf (tournament-bracket-loser bracket) (second participants))
+      (values rest bracket))))
 
 ; --- Parse PARTICIPANT
 (defun parse-participant (tokens)
@@ -181,6 +231,9 @@
     (error "Expected a token, got nothing."))
   (let ((token (first tokens)))
     (when expected-type
-          (unless (token-type-p token expected-type)
-            (error "Expected token type ~a, got ~a" expected-type (first token))))
+          (cond
+           ((listp expected-type) (unless (member (token-type token) expected-type)
+                                    (error "Expected token type ~a, got ~a" expected-type (first tokens))))
+           (T (unless (token-type-p token expected-type)
+                (error "Expected token type ~a, got ~a" expected-type (first tokens))))))
     (values token (rest tokens))))

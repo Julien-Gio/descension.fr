@@ -7,7 +7,8 @@
   (awards NIL)
   (description "")
   (game-groups NIL)
-  (games NIL))
+  (games NIL)
+  (tournaments NIL))
 
 (defstruct PARTICIPANT-REF
  (name ""))

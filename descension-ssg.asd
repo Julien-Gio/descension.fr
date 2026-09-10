@@ -14,5 +14,6 @@
      (:file "src/html/add-page")
      (:file "src/html/edition-page")
      (:file "src/pages/2025")
+     (:file "src/utils")
      (:file "src/main")))
 

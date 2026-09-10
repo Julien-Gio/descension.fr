@@ -1,5 +1,9 @@
-(defpackage #:token
+(defpackage #:utils
   (:use #:cl)
+  (:export #:push-end))
+
+(defpackage #:token
+  (:use #:cl #:utils)
   (:export #:TOKEN
            #:make-token
            #:token-type
@@ -10,7 +14,7 @@
            #:token-type-p))
 
 (defpackage #:edition
-  (:use #:cl)
+  (:use #:cl #:utils)
   (:export #:EDITION
            #:make-edition
            #:edition-name
@@ -20,6 +24,7 @@
            #:edition-description
            #:edition-game-groups
            #:edition-games
+           #:edition-tournaments
            #:PARTICIPANT-REF
            #:make-participant-ref
            #:participant-ref-name
@@ -38,23 +43,35 @@
            #:game-results
            #:games-in-group
            #:participant-points-for-games
-           #:participant-points-for-game))
+           #:participant-points-for-game
+           #:TOURNAMENT
+           #:make-tournament
+           #:tournament-parent-group
+           #:tournament-points
+           #:tournament-winners-brackets
+           #:tournament-losers-brackets
+           #:TOURNAMENT-BRACKET
+           #:make-tournament-bracket
+           #:tournament-bracket-name
+           #:tournament-bracket-participants
+           #:tournament-bracket-winner
+           #:tournament-bracket-loser))
 
 (defpackage #:parser
-  (:use #:cl #:token #:edition)
+  (:use #:cl #:utils #:token #:edition)
   (:export #:parse))
 
 (defpackage #:lexer
-  (:use #:cl #:token)
+  (:use #:cl #:utils #:token)
   (:export #:lex
            #:print-tokens))
 
 (defpackage #:interpreter
-  (:use #:cl)
+  (:use #:cl #:utils)
   (:export #:load-content))
            
 (defpackage #:html
-  (:use #:cl #:edition)
+  (:use #:cl #:utils #:edition)
   (:export #:copy-assets-to-build-output
            #:header
            #:podium
@@ -65,7 +82,7 @@
            #:def-edition-page))
 
 (defpackage #:pages
-  (:use #:cl #:html)
+  (:use #:cl #:utils #:html)
   (:export #:page-2025))
 
 (defpackage #:descension-ssg
