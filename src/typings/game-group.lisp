@@ -1,6 +1,7 @@
 (in-package #:edition)
 
 (defstruct GAME-GROUP
+  (format "standard") ; can be one of [standard, tournament]
   (name "")
   (tags nil)
   (description ""))
@@ -13,13 +14,25 @@
   (points NIL)
   (results NIL))
 
+(defstruct TOURNAMENT
+  (parent-group NIL)
+  (points NIL)
+  (winners-brackets NIL)
+  (losers-brackets NIL))
+
+(defstruct TOURNAMENT-BRACKET
+  (name "")
+  (participants NIL)
+  (winner NIL)
+  (loser NIL))
+
+
 (defun games-in-group (all-games game-group-name)
   (remove-if-not (lambda (g) (equal game-group-name (game-parent-group g))) all-games))
 
 (defun participant-points-for-games (games participant-name)
   (loop for game in games
           sum (participant-points-for-game game participant-name)))
-
 
 (defun participant-points-for-game (game participant-name)
   (let* ((points (game-points game))
