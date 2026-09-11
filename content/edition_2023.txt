@@ -1,0 +1,41 @@
+type edition
+name "2023"
+standing [@Dua @404 @P.M @Lintendo @Parapluie @Pastaga]
+
+define game-group "FFA"
+    points set "6-players" [+8 +6 +4 +3 +2 +1]
+    points set "4-players" [+6 +4 +2 +1]
+    game "Challengers"
+        points "6-players"
+        results [@404 @Dua @P.M @Parapluie @Pastaga @Lintendo]
+    game "Love letter"
+        points "6-players"
+        results [@404 @Lintendo @P.M @Dua @Pastaga]
+    game "Just Shapes & Beats"
+        points "4-players"
+        results [@404 @Dua @P.M @Lintendo]
+    game "Towerfall ascension"
+        points "4-players"
+        results [@Dua @404 @Pastaga @Lintendo]
+    game "Buisson"
+        points "4-players"
+        results [@Pastaga @Lintendo @P.M @404]
+    game "Tricky tower"
+        points "4-players"
+        results [@P.M @Dua @404 @Pastaga]
+    game "Boomerang fu"
+        points "4-players"
+        results [@Dua @Lintendo @P.M @Pastaga]
+end
+
+define game-group "Tournoi Versus"
+    points set [+6 +6 +6 +4 +4 +4]
+    game "Resultats finaux" results [@404 @P.M @Parapluie @Pastaga @Lintendo @Dua]
+end
+
+define game-group "Équipes"
+    points set +5
+    game "12 orbits" results [@Dua @P.M @Parapluie]
+    game "Top Ten" results [@Lintendo @Pastaga @Parapluie]
+    game "Pétanque" results [@Dua @404 @Parapluie]
+end

@@ -95,7 +95,8 @@
 (defpackage #:pages
   (:use #:cl #:utils #:html)
   (:export #:page-home
-           #:page-2025))
+           #:page-2025
+           #:page-2023))
 
 (defpackage #:descension-ssg
   (:use #:cl)
