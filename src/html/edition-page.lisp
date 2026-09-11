@@ -58,8 +58,10 @@
                 (group-games (remove-if-not (lambda (g) (equal ,group-name (game-parent-group g))) all-games))
                 (points-per-game (loop for g in group-games
                                        collect (append (list (game-name g))
-                                                 (loop for p in (edition-standing edition)
-                                                       collect (participant-points-for-game g (participant-ref-name p)))))))
+                                                 (mapcar 
+                                                   #'(lambda (x) (format nil "~@D" x)) 
+                                                   (loop for p in (edition-standing edition)
+                                                       collect (participant-points-for-game g (participant-ref-name p))))))))
            (html-table (append (list ,group-name) participant-names)
                        points-per-game))))
 
@@ -169,14 +171,12 @@
              (isP1Winner (equal p1 (tournament-bracket-winner final-bracket)))
              (isP2Winner (equal p2 (tournament-bracket-winner final-bracket))))
         (list :div (list :attrs :class "bracket-grid gf gf-grid" :style "grid-template-rows:repeat(4,1fr);grid-template-columns:0 minmax(11em,11em)")
-              (list :div (list :attrs :class (format nil "bracket top round1 ~a" (if isP1Winner "bracket-winner" ""))) 
-                (list :div '(:attrs :class "bracket-name") (participant-ref-name p1))
-                (list :div '(:attrs :class "bracket-points") 0)
-                )
-              (list :div (list :attrs :class (format nil "bracket bottom round1 ~a" (if isP2Winner "bracket-winner" ""))) 
-              (list :div '(:attrs :class "bracket-name") (participant-ref-name p2))
-                (list :div '(:attrs :class "bracket-points") 0)
-              ))))))
+              (list :div (list :attrs :class (format nil "bracket top round1 ~a" (if isP1Winner "bracket-winner" "")))
+                    (list :div '(:attrs :class "bracket-name") (participant-ref-name p1))
+                    (list :div '(:attrs :class "bracket-points") 0))
+              (list :div (list :attrs :class (format nil "bracket bottom round1 ~a" (if isP2Winner "bracket-winner" "")))
+                    (list :div '(:attrs :class "bracket-name") (participant-ref-name p2))
+                    (list :div '(:attrs :class "bracket-points") 0)))))))
 
 (defun html-table (header-cells data-rows)
   (list :table
@@ -184,7 +184,8 @@
         (loop for row in data-rows
               collect (append (list :tr)
                         (loop for data-cell in row
-                              collect (list :td data-cell))))))
+                              for isZero = (zero-value-p data-cell)
+                              collect (list :td (list :attrs :class (if isZero "zero" "")) data-cell))))))
 
 ; =================  Helper functions  =================
 

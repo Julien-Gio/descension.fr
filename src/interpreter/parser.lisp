@@ -85,7 +85,7 @@
                ((token-type-p token :GAME) (multiple-value-bind (restTemp game) (parse-game rest)
                                              (setf rest restTemp)
                                              (push game games)))
-               (T (error "unexpected token ~a" (token-to-string (first rest))))))
+               (T (error "unexpected game group token ~a" (token-to-string (first rest))))))
       (multiple-value-bind (_ rest2) (consume rest :END)
         (push game-group (edition-game-groups edition))
         (loop for game in games
@@ -110,20 +110,20 @@
   (let ((identifier nil)
         (value nil))
     (multiple-value-bind (_ rest) (consume tokens :POINTS)
-      ; identifier (optionnal, defaults to nil)
-      (when (token-type-p (first rest) :STRING)
-            (multiple-value-bind (identifierToken restTemp) (consume rest :STRING)
-              (setf rest restTemp)
-              (setf identifier (token-literal identifierToken))))
-
-      ; a number OR an array of numbers
-      (cond
-       ((token-type-p (first rest) :NUMBER) (multiple-value-bind (valueToken restTemp) (consume rest :NUMBER)
-                                              (setf rest restTemp)
-                                              (setf value (token-literal valueToken))))
-       ((token-type-p (first rest) :OPEN_BRACKET) (multiple-value-setq (rest value) (consume-array rest #'token-literal)))
-       (T (error "unexpected token ~a" (token-to-string (first rest)))))
-      (values rest identifier value))))
+      (multiple-value-bind (_ rest) (consume rest :SET)
+        ; identifier (optionnal, defaults to nil)
+        (when (token-type-p (first rest) :STRING)
+              (multiple-value-bind (identifierToken restTemp) (consume rest :STRING)
+                (setf rest restTemp)
+                (setf identifier (token-literal identifierToken))))
+        ; a number OR an array of numbers
+        (cond
+         ((token-type-p (first rest) :NUMBER) (multiple-value-bind (valueToken restTemp) (consume rest :NUMBER)
+                                                (setf rest restTemp)
+                                                (setf value (token-literal valueToken))))
+         ((token-type-p (first rest) :OPEN_BRACKET) (multiple-value-setq (rest value) (consume-array rest #'token-literal)))
+         (T (error "unexpected token ~a" (token-to-string (first rest)))))
+        (values rest identifier value)))))
 
 (defun parse-game (tokens)
   (multiple-value-bind (_ rest) (consume tokens :GAME)

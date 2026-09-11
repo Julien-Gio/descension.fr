@@ -7,3 +7,11 @@
 (defun write-repeated-string (n string)
   (with-output-to-string (s)
     (loop repeat n do (format s "~a" string))))
+
+(defun zero-value-p (value)
+  (cond
+   ((numberp value) (zerop value))
+   ((stringp value) (handler-case
+                        (zerop (read-from-string value))
+                      (error () nil)))
+   (T nil)))

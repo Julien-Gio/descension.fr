@@ -12,6 +12,10 @@ th, td {
   border-bottom: 1px solid #e0e0e0;
 }
 
+td.zero {
+  opacity: 0.3;
+}
+
 th:first-child, 
 td:first-child {
   text-align: left;

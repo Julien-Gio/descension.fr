@@ -1,7 +1,8 @@
 (defpackage #:utils
   (:use #:cl)
   (:export #:push-end
-           #:write-repeated-string))
+           #:write-repeated-string
+           #:zero-value-p))
 
 (defpackage #:token
   (:use #:cl #:utils)
@@ -75,7 +76,8 @@
            
 (defpackage #:html
   (:use #:cl #:utils #:edition)
-  (:export #:copy-assets-to-build-output
+  (:export #:render-html
+           #:copy-assets-to-build-output
            #:header
            #:podium
            #:leaderboard
@@ -87,7 +89,8 @@
 
 (defpackage #:pages
   (:use #:cl #:utils #:html)
-  (:export #:page-2025))
+  (:export #:page-home
+           #:page-2025))
 
 (defpackage #:descension-ssg
   (:use #:cl)
