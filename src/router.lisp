@@ -2,6 +2,7 @@
 (print "=== ROUTER SCRIPT ===")
 (html:add-page "/" (pages:page-home))
 (html:add-page "/test-page" "<p><em>THIS IS THE TEST PAGE</em></p>")
+(html:add-page "/e/2022" (pages:page-2022))
 (html:add-page "/e/2023" (pages:page-2023))
 (html:add-page "/e/2025" (pages:page-2025))
 

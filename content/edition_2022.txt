@@ -1,0 +1,35 @@
+type edition
+name "2022"
+standing [@P.M @404 @Dua @Parapluie @Pastaga]
+
+define game-group "Individuels"
+    points set "diapo" [+6 +6 +3 +2 +1 +0] ; TODO gérer les égalités
+    points set "mollky" +1
+    game "Diaporama Karaoké" points "diapo"
+        results [@Dua @P.M @Pastaga @404 @Parapluie @Otho]
+    game "Mollky" points "mollky" results [@404 @Otho]
+end
+
+define game-group "Tournoi Versus"
+    points set [+7 +3 +3 +3 +1 +0]
+    game "Resultats finaux" results [@P.M @Parapluie @Dua @404 @Pastaga @Otho]
+end
+
+define game-group "Équipes"
+    points set +2
+    game "12 orbits" results [@Otho @P.M @404]
+    game "Code names" results [@Otho @Otho @P.M]
+    game "Pétanque 1" results [@Dua @404 @P.M]
+    game "Pétanque 2" results [@Dua @Pastaga @P.M]
+    game "Captain sonar" results [@Dua @Parapluie @P.M]
+end
+
+define game-group "Quiz Pompe"
+    points set [+7 +5 +3 +2 +1 +0]
+    game "" results [@404 @Parapluie @Dua @Pastaga @Otho @P.M]
+end
+
+define game-group "Blind & Run"
+    points set [+3 +3 +2 +2 +1 +1]
+    game "" results [@404 @P.M @Dua @Pastaga @Parapluie @Otho]
+end
