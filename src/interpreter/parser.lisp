@@ -56,7 +56,7 @@
 (defun parse-standing (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :STANDING)
     (multiple-value-bind (rest2 participants) (consume-array rest #'parse-participant-ref)
-      (setf (edition-standing edition) (sort (copy-list participants) #'string< :key #'participant-ref-name))
+      (setf (edition-standing edition) participants)
       (values rest2 edition participants))))
 
 (defun parse-define-block (tokens edition)
