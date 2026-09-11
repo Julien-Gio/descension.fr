@@ -93,7 +93,7 @@ define tournament "Tournoi"
 	  [@P.M @Lintendo]
 	  [@Otho @Pastaga]
 	]
-	winners-bracket set "Demi"   [[@404 @Parapluie] [@P.M @Otho]]
+	winners-bracket set "Demi"   [[@Parapluie @404] [@P.M @Otho]]
 	winners-bracket set "Finale" [[@P.M @Parapuie]]
 	losers-bracket set "Seizièmes" [[@Dua @Pastaga]]
 	losers-bracket set "Huitièmes" [[@Lintendo @Dua] [@Catapulte @Barbeer]]
