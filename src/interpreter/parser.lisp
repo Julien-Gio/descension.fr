@@ -17,7 +17,9 @@
         while tokens
         do ; (format T "~&Parsing: ~a" (first tokens))
           (multiple-value-setq (tokens edition) (parse-edition-field tokens edition))
-
+          ; sort games
+          (unless (null edition)
+            (setf (edition-games edition) (sort (copy-list (edition-games edition)) #'string< :key #'game-name)))
         finally (return edition)))
 
 (defun parse-edition-field (tokens edition)
@@ -54,7 +56,7 @@
 (defun parse-standing (tokens edition)
   (multiple-value-bind (_ rest) (consume tokens :STANDING)
     (multiple-value-bind (rest2 participants) (consume-array rest #'parse-participant-ref)
-      (setf (edition-standing edition) participants)
+      (setf (edition-standing edition) (sort (copy-list participants) #'string< :key #'participant-ref-name))
       (values rest2 edition participants))))
 
 (defun parse-define-block (tokens edition)
