@@ -95,6 +95,7 @@
 (defpackage #:pages
   (:use #:cl #:utils #:html)
   (:export #:page-home
+           #:page-2021
            #:page-2022
            #:page-2023
            #:page-2025))

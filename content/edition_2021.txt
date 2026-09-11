@@ -1,0 +1,26 @@
+type edition
+name "2021"
+standing [@404 @Dua @Pastaga @Parapluie @Otho]
+
+define game-group "FFA"
+    points set [+5 +3 +2 +1 +0] ; TODO gérer les égalités
+    game "Wingspan" results [@Pastaga @404 @Otho @Parapluie @Dua]
+    game "Splendor" results [@Dua @Parapluie @Otho @Pastaga @404]
+    game "Mollky" results [@Pastaga @Parapluie @Otho @Dua @404]
+    game "Skyjo" results [@404 @Otho @Pastaga @Dua @Parapluie]
+end
+
+define game-group "Tournoi (round robin)"
+    points set [+3 +3 +3 +1 +0]
+    game "Resultats finaux" results [@Dua @404 @Parapluie @Otho @Pastaga]
+end
+
+define game-group "Quiz Pompe"
+    points set [+7 +5 +3 +2 +1 +0]
+    game "" results [@404 @Parapluie @Dua @Pastaga @Otho @P.M]
+end
+
+define game-group "Blind & Run"
+    points set [+3 +3 +2 +2 +1 +1]
+    game "" results [@404 @P.M @Dua @Pastaga @Parapluie @Otho]
+end
