@@ -1,51 +1,132 @@
+/* TABLES */
+table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-bottom: 2rem;
+  background-color: #fff;
+}
+
+th, td {
+  padding: 10px 12px;
+  text-align: center;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+th:first-child, 
+td:first-child {
+  text-align: left;
+  font-weight: bold;
+}
+
+th {
+  background-color: #f8f9fa;
+  color: #444;
+  text-transform: uppercase;
+  font-size: 0.85em;
+  letter-spacing: 0.5px;
+}
+
+tr:nth-child(even) {
+  background-color: #fbfcff;
+}
+
+tr:hover {
+  background-color: #f1f3f5;
+}
+
+/* PODIUM */
 .podium {
   display: flex;
   flex-direction: column;
   align-items: center;
+  margin: 2rem 0;
 }
+
 .podium-top-3 {
   display: flex;
-  align-items: end;
+  align-items: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
 }
+
 .podium-top-3 > div {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-left: 0.2em;
-  margin-right: 0.2em;
+  font-weight: 600;
+  font-size: 1.05rem;
+  gap: 6px;
 }
+
 .podium-step {
-  width: 100px;
+  width: 110px;
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
 }
+
 .gold .podium-step {
-  height: 80px;
-  background-color: gold;
+  height: 110px;
+  background: linear-gradient(180deg, #efb64b 0%, #f59f00 100%);
 }
+.gold .podium-step::after { content: "1"; }
+
 .silver .podium-step {
-  height: 50px;
-  background-color: silver;
+  height: 75px;
+  background: linear-gradient(180deg, #c3cdd8 0%, #adb5bd 100%);
 }
+.silver .podium-step::after { content: "2"; }
+
 .bronze .podium-step {
-  height: 30px;
-  background-color: brown;
+  height: 50px;
+  background: linear-gradient(180deg, #de741d 0%, #c96b1d 100%);
 }
+.bronze .podium-step::after { content: "3"; }
+
+/* Rest of Standings (Pills format for ranks 4–10) */
+.podium .rest-of-standings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 600px;
+}
+
 .podium .rest-of-standings p {
-  display: inline;
-  margin-right: 1em;
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  color: #495057;
+  font-weight: 500;
 }
+
 .podium .rest-of-standings p::before {
   content: attr(data-position) ".";
-  opacity: 0.6;
-  margin-right: 0.1em;
+  font-weight: 700;
+  color: #3b5bdb;
+  margin-right: 6px;
+  opacity: 1;
 }
 
 /* TOURNAMENT */
 h3.tournament-section-header{
-	font-size:14px;
+	font-size:1rem;
 	text-transform:uppercase;
 	letter-spacing:1px;
-	color:#555;
-	margin:26px 0 8px;
+	color:#666;
+	margin: 2.5rem 0 1rem 0;
+	padding-bottom: 0.4rem;
+	border-bottom: 2px solid #e9ecef;
 }
 
 .bracket-grid {
@@ -70,26 +151,34 @@ h3.tournament-section-header{
 .bracket {
 	grid-row: span 2;
 	display: table;
-	border: 1px solid gray;
+  border: 1px solid #dee2e6;
 	border-radius: 2px;
 	height: 100%;
 	width: 100%;
 	box-sizing: border-box;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
 }
 
 .bracket.top {
 	border-radius: 8px 8px 0 0;
+	border-bottom: 0;
 }
 
 .bracket.bottom {
 	border-radius: 0 0 8px 8px;
-  margin-top: -1px;
+	border-top: 0;
 }
 
 .bracket-grid-header {
-	border: 1px solid gray;
+	border: none;
+	border-radius: 8px;
 	background: lightblue;
 	text-align: center;
+	font-size: 0.8rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
 }
 
 .bracket-header-content,
@@ -100,10 +189,12 @@ h3.tournament-section-header{
 }
 
 .bracket-name {
-	padding: 4px 6px;
+	padding: 6px 10px;
+	font-size: 0.9rem;
 	min-width: 4em;
 	max-width: 0;
 	word-wrap: break-word;
+	color: #495057;
 }
 
 .bracket-points {
@@ -117,6 +208,9 @@ h3.tournament-section-header{
 	border-radius: inherit;
 	border-top-left-radius: 0;
 	border-bottom-left-radius: 0;
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #adb5bd;
 }
 
 .bracket-line::after,
@@ -126,7 +220,7 @@ h3.tournament-section-header{
 	box-sizing: border-box;
 	display: inline-block;
 	margin: -1px;
-	border: 0 solid black;
+	border: 0 solid  hsl(228, 90%, 40%);
 }
 
 .bracket-line.horizontal::before{
@@ -177,9 +271,26 @@ h3.tournament-section-header{
 
 .bracket-winner {
 	font-weight: bold;
+	background-color: #ffffff;
+	color: #212529;
 }
-.bracket-winner .bracket-points{
-	color:black;
+
+.bracket-winner .bracket-points {
+  color: white;
+  font-weight: 700;
+}
+
+.wb .bracket-winner .bracket-points {
+  background-color: hsl(228, 50%, 55%);
+  border-left-color: hsl(228, 69%, 40%);
+}
+.lb .bracket-winner .bracket-points {
+  background-color: hsl(218, 50%, 55%);
+  border-left-color: hsl(218, 69%, 40%);
+}
+.gf .bracket-winner .bracket-points {
+  background-color: hsl(228, 50%, 55%);
+  border-left-color: hsl(228, 69%, 40%);
 }
 
 .round1 { grid-column: 2; }
@@ -193,7 +304,69 @@ h3.tournament-section-header{
 .bracket-line.round3 { grid-column: 7; }
 .bracket-line.round4 { grid-column: 9; }
 
-.wb .bracket-grid-header{background:#cfe3ff;}
-.lb .bracket-grid-header{background:#ffe1cf;}
+.wb .bracket-grid-header {
+  background-color: hsl(228, 90%, 40%);
+  color: hsl(228, 70%, 90%);
+}
+
+.lb .bracket-grid-header {
+  background-color: hsl(218, 90%, 55%);
+  color: hsl(218, 70%, 90%);
+}
 
 .gf-grid .bracket{max-width:14em;}
+
+
+/* Highlighted Header */
+.tournament-section-header:last-of-type {
+  color: #b45309;
+  border-bottom: 2px solid hsl(48, 80%, 60%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Container Card */
+.gf-grid {
+  background: hsl(48, 96%, 95%);
+  border: 2px solid hsl(48, 90%, 50%);
+  border-radius: 12px;
+  padding: 16px 20px;
+  box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
+  display: inline-grid;
+
+}
+
+.gf-grid .bracket {
+	background-color: white;
+  border-color: hsl(48, 90%, 50%);
+  box-shadow: 0 2px 8px rgba(180, 83, 9, 0.08);
+}
+
+.gf-grid .bracket-name {
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 14px;
+}
+
+.gf-grid .bracket-points {
+	font-size: 1rem;
+	width: 2.5em;
+	border-left-width: 12px;
+}
+
+.gf .bracket-winner {
+  border-color: hsl(38, 90%, 50%);
+}
+
+.gf .bracket-winner .bracket-name {
+	color: #78350f;
+	font-weight: bold;
+}
+
+.gf .bracket-winner .bracket-points {
+  background: hsl(39, 95%, 56%);
+  border-left-color: hsl(35, 90%, 40%);
+	font-weight: bold;
+  color: white;
+}

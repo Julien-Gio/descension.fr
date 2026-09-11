@@ -2,18 +2,18 @@
 
 
 (def-edition-page page-2025
-  (use "testData.txt")
+  (use "edition_2025.txt")
   (title "2025")
   (layout
-    (header "Podium")
     (podium)
     (header "Leaderboard")
     (leaderboard)
+    (header "Détails des jeux")
     (game-group-details "FFA")
     (game-group-details "Équipes")
-    (tournament "Tournoi")
     (game-group-details "Le Bocal")
     (game-group-details "Quiz Pompe")
-    (header "End of page")))
+    (header "Tournoi")
+    (tournament "Tournoi")))
 
 

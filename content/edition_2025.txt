@@ -1,0 +1,104 @@
+type edition   ; this is a comment and is ignored.
+name "2025"
+dates from (2025-09-05) to (2025-09-08)
+standing [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
+
+description "Bla bla bla.
+This is a multi-line text example.
+"
+
+define game-group "FFA" #individual-games
+	description "Règles : chaque canditat joue à 4 jeux dans la liste."
+	points [+5 +3 +2 +1]
+	points "8-players" [+6 +5 +4 +3 +2 +2 +1 +1 +1]
+	game "Blaze Rush" 
+	     results [@Pastaga   @Otho      @Lintendo  @404]
+	game "Boomerang fu" 
+	     results [@Dua       @Lintendo  @Pastaga   @404]
+	game "Just Shapes & beats" 
+	     results [@Parapluie @P.M       @Otho      @404]
+	game "Tricky Tower"
+	     results [@P.M       @Catapulte @Dua       @Barbeer]
+	game "Unspottable" 
+	     results [@Pastaga   @Dua       @Lintendo  @Barbeer]
+	game "Towerfall ascension" 
+	     results [@P.M       @Pastaga   @Catapulte @Otho]
+	game "Speedrunners"
+	     results [@Catapulte @Dua       @Parapluie @Barbeer]
+	game "Move or Die"
+	     results [@Parapluie @Barbeer   @P.M       @Lintendo]
+	game "Retimed"
+	     results [@Parapluie @Catapulte @404      @Otho]
+	game "Voyagers" 
+		points "8-players"
+	     results [@P.M @Otho @Parapluie @Barbeer @Catapulte @404 @Lintendo @Pastaga @JMM @Dua]
+end
+
+define game-group "Équipes" #team-games
+	description "Règles : +5 pour les jeux exterieurs. Pour les autres jeux, s'il est joué une seule fois : +5 pour l'équipe gagante. Sinon +3 par partie gagnée."
+	points "single" +5
+	points "multi" +3
+	points "sport" +5
+	game "Jeu du canapé (1)"
+	     points "multi" 
+		 results [@P.M @Dua @Lintendo @Barbeer @Catapulte]
+	game "Jeu du canapé (2)"
+	     points "multi" 
+		 results [@Pastaga @404 @Lintendo @Otho @Catapulte]
+	game "TTMC"
+	     points "single" 
+		 results [@Pastaga   @404      @Dua @Parapluie @JMM]
+	game "12 Orbits (1)"
+	     points "multi"
+		 results [@404 @Catapulte @P.M]
+	game "12 Orbits (2)"
+	     points "multi"
+		 results [@404 @Catapulte @P.M]
+	game "12 Orbits (3)"
+	     points "multi"
+		 results [@Pastaga @Parapluie @Dua]
+	game "Pétanque (1)"
+	     points "sport"
+		 results [@Dua @Otho]
+	game "Pétanque (2)"
+	     points "sport"
+		 results [@Pastaga @JMM @Barbeer]
+	game "Mollky (1)"
+	     points "sport"
+		 results [@404 @Catapulte]
+	game "Mollky (2)"
+	     points "sport"
+		 results [@Pastaga @JMM @Barbeer]
+end
+
+define game-group "Le Bocal" #individual-games
+	description "TODO"
+	points [+5 +4 +3 +2 +1]
+	game "" results [@Parapluie @404 @Otho @P.M @Lintendo]
+end
+
+define game-group "Quiz Pompe" #individual-games
+	description "TODO"
+	points [+12 +10 +8 +7 +6 +5 +4 +3 +2 +1]
+	game "" results [@Parapluie @404 @JMM @Pastaga @Lintendo @Otho @Dua @Catapulte @Barbeer @P.M]
+end
+
+define tournament "Tournoi"
+	description "This is a tournoi"
+	points [+18 +15 +12 +9 +6 +3 +1]
+	winners-bracket set "Huitièmes" [[@Catapulte @Dua]]
+	winners-bracket set "Quarts" [
+	  [@404 @Catapulte]
+	  [@Parapluie @Barbeer]
+	  [@P.M @Lintendo]
+	  [@Otho @Pastaga]
+	]
+	winners-bracket set "Demi"   [[@404 @Parapluie] [@P.M @Otho]]
+	winners-bracket set "Finale" [[@P.M @Parapuie]]
+	losers-bracket set "Seizièmes" [[@Dua @Pastaga]]
+	losers-bracket set "Huitièmes" [[@Lintendo @Dua] [@Catapulte @Barbeer]]
+	losers-bracket set "Quarts" [[@404 @Lintendo] [@Catapulte @Otho]]
+	losers-bracket set "Demi" [[@404 @Catapulte]]
+	losers-bracket set "Finale" [[@404 @Parapluie]]
+	final-bracket set "Grande finale" [@P.M @404]
+end

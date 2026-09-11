@@ -10,8 +10,9 @@
     `(defun ,name ()
        (let ((edition (interpreter:load-content ,edition-filename)))
          (render-html (list :html (list :head (list :title ,title)
+                                        (list :link '(:attrs :href "../../assets/main.css" :rel "stylesheet"))
                                         (list :link '(:attrs :href "../../assets/edition.css" :rel "stylesheet")))
-                            (list :body (list :h1 "Edition header " (edition-name edition))
+                            (list :body (list :h1 (list :a '(:attrs :href "/") "Descension - Edition " (edition-name edition)))
                                   ,@layout-items)))))))
 
 (defmacro header (content)
