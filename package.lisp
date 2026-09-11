@@ -30,9 +30,11 @@
            #:PARTICIPANT-REF
            #:make-participant-ref
            #:participant-ref-name
+           #:participant-ref-equal-p
            #:GAME-GROUP
            #:make-game-group
            #:game-group-name
+           #:game-group-format
            #:game-group-description
            #:game-group-tags
            #:GAME
@@ -59,7 +61,10 @@
            #:tournament-bracket-participants
            #:tournament-bracket-winner
            #:tournament-bracket-loser
-           #:find-tournament-by-group-name))
+           #:find-tournament-by-group-name
+           #:tournament-in-group
+           #:participant-points-for-tournaments
+           #:participant-points-for-tournament))
 
 (defpackage #:parser
   (:use #:cl #:utils #:token #:edition)

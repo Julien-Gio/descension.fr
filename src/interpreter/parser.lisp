@@ -194,7 +194,7 @@
                   while (not (token-type-p (first rest) :CLOSE_BRACKET))
                   do (multiple-value-bind (restTemp bracket) (parse-bracket rest (token-literal name-token))
                        (setf rest restTemp)
-                       (push bracket brackets)))
+                       (push-end bracket brackets)))
             (multiple-value-bind (_ rest) (consume rest :CLOSE_BRACKET)
               (values rest brackets))))))))
 

@@ -42,10 +42,18 @@
                 (participant-points (loop for p in (edition-standing edition)
                                           for i from 1
                                           for p-name = (participant-ref-name p)
-                                          collect (append (list i p-name (participant-points-for-games (edition-games edition) p-name))
+                                          collect (append (list i
+                                                                p-name
+                                                                (+
+                                                                 (participant-points-for-games (edition-games edition) p-name)
+                                                                 (participant-points-for-tournaments (edition-tournaments edition) p)))
                                                     (loop for gg in (edition-game-groups edition)
                                                           for group-games = (games-in-group (edition-games edition) (game-group-name gg))
-                                                          collect (participant-points-for-games group-games p-name))))))
+                                                          for group-tournament = (tournament-in-group (edition-tournaments edition) (game-group-name gg))
+                                                            when (string= (game-group-format gg) "standard")
+                                                          collect (participant-points-for-games group-games p-name)
+                                                            when (string= (game-group-format gg) "tournament")
+                                                          collect (participant-points-for-tournament group-tournament p))))))
            (html-table (append '(nil nil nil) game-groups) participant-points))))
 
 (defmacro trophies ()
@@ -58,10 +66,10 @@
                 (group-games (remove-if-not (lambda (g) (equal ,group-name (game-parent-group g))) all-games))
                 (points-per-game (loop for g in group-games
                                        collect (append (list (game-name g))
-                                                 (mapcar 
-                                                   #'(lambda (x) (format nil "~@D" x)) 
+                                                 (mapcar
+                                                     #'(lambda (x) (format nil "~@D" x))
                                                    (loop for p in (edition-standing edition)
-                                                       collect (participant-points-for-game g (participant-ref-name p))))))))
+                                                         collect (participant-points-for-game g (participant-ref-name p))))))))
            (html-table (append (list ,group-name) participant-names)
                        points-per-game))))
 
@@ -105,10 +113,10 @@
                                  collect (list
                                           (list :div (list :attrs :class (format nil "bracket top ~a ~a" css-round (if isP1Winner "bracket-winner" "")))
                                                 (list :div '(:attrs :class "bracket-name") (participant-ref-name p1))
-                                                (list :div '(:attrs :class "bracket-points") 0))
+                                                (list :div '(:attrs :class "bracket-points") (if isP1Winner "W" "élim.")))
                                           (list :div (list :attrs :class (format nil "bracket bottom ~a ~a" css-round (if isP2Winner "bracket-winner" "")))
                                                 (list :div '(:attrs :class "bracket-name") (participant-ref-name p2))
-                                                (list :div '(:attrs :class "bracket-points") 0))
+                                                (list :div '(:attrs :class "bracket-points") (if isP2Winner "W" "élim.")))
                                           (list :div (list :attrs :class (format nil "bracket-spacer ~a" css-round) :style (format nil "grid-row:span ~a" css-row-gaps-in-between)))))
                            ; connetors
                            (unless (= i wb-rounds)
@@ -146,10 +154,16 @@
                                  collect (list
                                           (list :div (list :attrs :class (format nil "bracket top ~a ~a" css-round (if isP1Winner "bracket-winner" "")))
                                                 (list :div '(:attrs :class "bracket-name") (participant-ref-name p1))
-                                                (list :div '(:attrs :class "bracket-points") 0))
+                                                (list :div '(:attrs :class "bracket-points")
+                                                      (if isP1Winner
+                                                          "W"
+                                                          (format nil "+~a pts" (participant-points-for-tournament tournament p1)))))
                                           (list :div (list :attrs :class (format nil "bracket bottom ~a ~a" css-round (if isP2Winner "bracket-winner" "")))
                                                 (list :div '(:attrs :class "bracket-name") (participant-ref-name p2))
-                                                (list :div '(:attrs :class "bracket-points") 0))
+                                                (list :div '(:attrs :class "bracket-points")
+                                                      (if isP2Winner
+                                                          "W"
+                                                          (format nil "+~a pts" (participant-points-for-tournament tournament p2)))))
                                           (list :div (list :attrs :class (format nil "bracket-spacer ~a" css-round) :style (format nil "grid-row:span ~a" css-row-gaps-in-between)))))
                            ; connetors
                            (unless (= i lb-rounds)
@@ -170,13 +184,15 @@
              (p2 (second (tournament-bracket-participants final-bracket)))
              (isP1Winner (equal p1 (tournament-bracket-winner final-bracket)))
              (isP2Winner (equal p2 (tournament-bracket-winner final-bracket))))
-        (list :div (list :attrs :class "bracket-grid gf gf-grid" :style "grid-template-rows:repeat(4,1fr);grid-template-columns:0 minmax(11em,11em)")
+        (list :div (list :attrs :class "bracket-grid gf gf-grid" :style "grid-template-rows:repeat(4,1fr);grid-template-columns:0 minmax(14em,14em)")
               (list :div (list :attrs :class (format nil "bracket top round1 ~a" (if isP1Winner "bracket-winner" "")))
                     (list :div '(:attrs :class "bracket-name") (participant-ref-name p1))
-                    (list :div '(:attrs :class "bracket-points") 0))
+                    (list :div '(:attrs :class "bracket-points")
+                          (format nil "+~a pts" (participant-points-for-tournament tournament p1))))
               (list :div (list :attrs :class (format nil "bracket bottom round1 ~a" (if isP2Winner "bracket-winner" "")))
                     (list :div '(:attrs :class "bracket-name") (participant-ref-name p2))
-                    (list :div '(:attrs :class "bracket-points") 0)))))))
+                    (list :div '(:attrs :class "bracket-points")
+                          (format nil "+~a pts" (participant-points-for-tournament tournament p2)))))))))
 
 (defun html-table (header-cells data-rows)
   (list :table

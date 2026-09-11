@@ -11,6 +11,7 @@
   (tournaments NIL))
 
 (defstruct PARTICIPANT-REF
- (name ""))
+  (name ""))
 
- 
+(defun participant-ref-equal-p (a b)
+  (string= (participant-ref-name a) (participant-ref-name b)))
