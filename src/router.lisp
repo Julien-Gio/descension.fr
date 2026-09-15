@@ -6,4 +6,5 @@
 (html:add-page "/e/2022" (pages:page-2022))
 (html:add-page "/e/2023" (pages:page-2023))
 (html:add-page "/e/2025" (pages:page-2025))
+(html:add-page "/e/2026" (pages:page-2026))
 

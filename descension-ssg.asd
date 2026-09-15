@@ -13,11 +13,13 @@
      (:file "src/interpreter/interpreter")
      (:file "src/html/renderer")
      (:file "src/html/add-page")
+     (:file "src/html/tournament")
      (:file "src/html/edition-page")
      (:file "src/pages/2021")
      (:file "src/pages/2022")
      (:file "src/pages/2023")
      (:file "src/pages/2025")
+     (:file "src/pages/2026")
      (:file "src/pages/home")
      (:file "src/main")))
 
