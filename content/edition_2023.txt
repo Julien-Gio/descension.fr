@@ -1,6 +1,6 @@
 type edition
 name "2023"
-standing [@Dua @404 @P.M @Lintendo @Parapluie @Pastaga]
+participants [@Dua @404 @P.M @Lintendo @Parapluie @Pastaga]
 
 define game-group "FFA"
     points set "6-players" [+8 +6 +4 +3 +2 +1]

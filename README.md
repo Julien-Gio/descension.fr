@@ -38,7 +38,7 @@ TO: "to"
 DEFINE: "define"
 END: "end"
 NAME: "name"
-STANDING: "standing"
+PARTICIPANTS: "participants"
 DESCRIPTION: "description"
 DATES: "dates"
 GAME-GROUP: "game-group"
@@ -86,7 +86,7 @@ Here is an example:
 type edition ; this is a comment and is ignored.
 name "2025"
 dates from (2025-09-05) to (2025-09-08)
-standing [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
+participants [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
 
 description "
 Bla bla bla.
@@ -111,7 +111,7 @@ end
 (DATE 2025-09-05)
 (TO)
 (DATE 2025-09-08)
-(STANDING)
+(PARTICIPANTS)
 (OPEN_BRACKET [)
 (PARTICIPANT Parapluie)
 (PARTICIPANT 404)
@@ -174,7 +174,7 @@ The file must start with the `type` keyword followed by `edition` or `participan
 (defstruct EDITION
   :NAME nil  ; string 
   :DATES nil  ; #S(RANGE)
-  :STANDING nil  ; list of #S(PARTICIPANT-REF)
+  :PARTICIPANTS nil  ; list of #S(PARTICIPANT-REF)
   :DESCRIPTION nil  ; string
   :GAME-GROUPS nil  ; list of #S(GAME-GROUP)
   :GAMES nil)  ; list of #S(GAME)
@@ -224,7 +224,7 @@ Example of decoded edition structure:
 #S(EDITION
 	:NAME "2025"
 	:DATES #S(RANGE :START (2025 09 05) :END (2025 09 08))
-	:STANDING (#S(PARTICIPANT :NAME "Parapluie") 
+	:PARTICIPANTS (#S(PARTICIPANT :NAME "Parapluie") 
 			  #S(PARTICIPANT :NAME "404")
 			  #S(PARTICIPANT :NAME "P.M")
 			  #S(PARTICIPANT :NAME "Catapulte")

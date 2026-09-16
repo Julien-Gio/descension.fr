@@ -1,7 +1,7 @@
 type edition   ; this is a comment and is ignored.
 name "2026"
 dates from (2026-09-11) to (2025-09-15)
-standing [@Catapulte @404 @Dua @Parapluie @Pastaga @P.M @Otho @Lintendo]
+participants [@Catapulte @404 @Dua @Parapluie @Pastaga @P.M @Lintendo @Otho]
 
 description "Bla bla bla.
 This is a multi-line text example.
@@ -26,8 +26,8 @@ end
 define game-group "FFA"
 	description "Règles : chaque canditat joue à 4 jeux dans la liste."
 	points set [+5 +3 +2 +1]
-	points set "8-players" [+6 +5 +4 +3 +2 +2 +1 +1 +1]
-	game "Blaze Rush (1)" results [@Parapluie @404 @Catapulte @Dua]
+	points set "8-players" [+6 +5 +4 +3 +3 +2 +2 +1]
+	game "Blaze Rush (1)" results [@Parapluie [@404 @Catapulte] @Dua]
 	game "Blaze Rush (2)" results [@Pastaga @Lintendo @P.M @Otho]
 	game "Boomerang fu" results [@404 @Pastaga @Otho @Lintendo]
 	game "Just Shapes & beats" results [@Parapluie @Otho @P.M @Lintendo]
@@ -35,19 +35,19 @@ define game-group "FFA"
 	game "Move or Die" results [@404 @Catapulte @Pastaga @Dua]
 	game "Retimed" results [@Dua @P.M @Otho @Pastaga]
 	game "Speedrunners" results [@Catapulte @Dua @Parapluie @Otho]
+	game "Spiderheck" results [@P.M @Lintendo @Catapulte @Pastaga]
 	game "Towerfall ascension" results [@Catapulte @Lintendo @Otho @P.M]
 	game "Unspottable" results [@Dua @Parapluie @Pastaga @404]
 	game "Tricky Tower" results [@Catapulte @P.M @404 @Parapluie]
 	game "Voyages (1)"
-		points "8-players"
-	    results [@404 @Parapluie @Dua @Otho @P.M @Lintendo @Catapulte @Pastaga]
+		 points "8-players"
+	     results [@404 @Parapluie @Dua @Otho @P.M @Lintendo @Catapulte @Pastaga]
 	game "Voyages (2)"
-		points "8-players"
-		; TODO ties
-	    results [@Dua @Parapluie @Otho @404 @Lintendo @Pastaga @P.M @Catapulte]
+		 points "8-players"
+	     results [[@Dua @Parapluie] @Otho [@404 @Lintendo] [@Pastaga @P.M] @Catapulte]
 	game "12 orbits" 
-		points "8-players"
-	    results [@Dua @Otho @Lintendo @404 @Parapluie @P.M @Catapulte @Pastaga]
+		 points "8-players"
+	     results [@Dua @Otho [@Lintendo @404] @Parapluie @P.M @Catapulte @Pastaga]
 end
 
 define game-group "Spécial"
@@ -55,6 +55,7 @@ define game-group "Spécial"
 	points set "course orientation" +6
 	points set "quiz pompe" [+10 +8 +7 +5 +4 +3 +2 +1]
 	points set "mystery word" [+4 +4 +4 +4 +3 +3 +2 +0]
+	points set "fun fact battle" [+6 +4 +2 +2 +1 +1 +1 +1]
 	game "Course d'orientation extrême"
 	     points "course orientation"
 		 results [@P.M @Dua @Otho @Catapulte]
@@ -64,6 +65,9 @@ define game-group "Spécial"
 	game "Mot mystère"
 	     points "mystery word" 
 		 results [@404 @Lintendo @Pastaga @P.M @Otho @Parapluie @Catapulte @Dua]
+	game "Fun fact battle"
+	     points "fun fact battle" 
+		 results [@P.M @Parapluie @Dua @Lintendo @Otho @Pastaga @Catapulte @404]
 end
 
 define tournament "Tournoi"
@@ -75,11 +79,11 @@ define tournament "Tournoi"
 	  [@P.M @Lintendo]
 	  [@Parapluie @Otho]
 	]
-	winners-bracket set "Demi"   [[@Catapulte @Pastaga] [@P.M @Parapluie]]
-	winners-bracket set "Finale" [[@Catapulte @P.M]]
-	losers-bracket set "Huitièmes" [[@404 @Dua] [@Lintendo @Otho]]
-	losers-bracket set "Quarts" [[@404 @Parapluie] [@Pastaga @Lintendo]]
-	losers-bracket set "Demi" [[@Pastaga @404]]
-	losers-bracket set "Finale" [[@Pastaga @P.M]]
+	winners-bracket set "Demi"        [[@Catapulte @Pastaga] [@P.M @Parapluie]]
+	winners-bracket set "Finale"      [[@Catapulte @P.M]]
+	losers-bracket set "Huitièmes"    [[@404 @Dua] [@Lintendo @Otho]]
+	losers-bracket set "Quarts"       [[@404 @Parapluie] [@Pastaga @Lintendo]]
+	losers-bracket set "Demi" 	      [[@Pastaga @404]]
+	losers-bracket set "Finale"       [[@Pastaga @P.M]]
 	final-bracket set "Grande finale" [@Catapulte @Pastaga]
 end

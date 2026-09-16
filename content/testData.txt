@@ -1,7 +1,7 @@
 type edition   ; this is a comment and is ignored.
 name "2025 (test page)"
 dates from (2025-09-05) to (2025-09-08)
-standing [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
+participants [@Parapluie @404 @P.M @Catapulte @Pastaga @Dua @Otho @Barbeer @Lintendo @JMM]
 
 description "Bla bla bla.
 This is a multi-line text example.

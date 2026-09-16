@@ -1,6 +1,6 @@
 type edition
 name "2022"
-standing [@P.M @404 @Dua @Parapluie @Pastaga]
+participants [@P.M @404 @Dua @Parapluie @Pastaga]
 
 define game-group "Individuels"
     points set "diapo" [+6 +6 +3 +2 +1 +0] ; TODO gérer les égalités

@@ -12,7 +12,7 @@
   (tags NIL)
   (points-identifier NIL)
   (points NIL)
-  (results NIL))
+  (results NIL)) ; List of participant-refs | arrays of participant-refs
 
 (defstruct TOURNAMENT
   (parent-group NIL)
@@ -31,13 +31,13 @@
 (defun games-in-group (all-games game-group-name)
   (remove-if-not (lambda (g) (equal game-group-name (game-parent-group g))) all-games))
 
-(defun participant-points-for-games (games participant-name)
+(defun participant-points-for-games (games participant)
   (to-int-if-possible (loop for game in games
-                              sum (participant-points-for-game game participant-name))))
+                              sum (participant-points-for-game game participant))))
 
-(defun participant-points-for-game (game participant-name)
+(defun participant-points-for-game (game participant)
   (let* ((points (game-points game))
-         (ranking (position-if #'(lambda (ref) (equal participant-name (participant-ref-name ref))) (game-results game))))
+         (ranking (get-ranking-in-game game participant)))
     (to-int-if-possible (cond
                          ((null ranking) 0)
                          ((numberp points) points)
@@ -48,6 +48,12 @@
   (first (remove-if-not
              (lambda (g) (equal game-group-name (tournament-parent-group g)))
              all-tournaments)))
+
+
+(defun participant-points-in-edition (edition participant)
+  (+
+   (participant-points-for-games (edition-games edition) participant)
+   (participant-points-for-tournaments (edition-tournaments edition) participant)))
 
 (defun participant-points-for-tournaments (tournaments participant)
   (loop for tournament in tournaments
@@ -85,3 +91,15 @@
   (loop for tournament in (edition-tournaments edition)
           when (equal name (tournament-parent-group tournament))
           return tournament))
+
+(defun get-ranking-in-game (game participant-ref)
+  (loop for ranking-p in (game-results game)
+        with index = 0
+          when (listp ranking-p)
+        do (if (find participant-ref ranking-p :test #'participant-ref-equal-p)
+               (return index)
+               (incf index (length ranking-p)))
+          when (participant-ref-p ranking-p)
+        do (if (participant-ref-equal-p participant-ref ranking-p)
+               (return index)
+               (incf index))))

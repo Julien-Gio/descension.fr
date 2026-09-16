@@ -27,7 +27,7 @@
     (cond
      ((token-type-p token :NAME) (parse-name tokens edition))
      ((token-type-p token :DATES) (parse-date tokens edition))
-     ((token-type-p token :STANDING) (parse-standing tokens edition))
+     ((token-type-p token :PARTICIPANTS) (parse-edition-participants tokens edition))
      ((token-type-p token :DESCRIPTION) (parse-description tokens edition))
      ((token-type-p token :DEFINE) (parse-define-block tokens edition))
      (T (error "unexpected token ~a" (token-to-string (first tokens)))))))
@@ -53,10 +53,10 @@
             (setf (edition-dates edition) (concatenate 'string (token-literal start-date) ":" (token-literal end-date))) ; TODO JUL implement date ranges 
             (values rest5 edition)))))))
 
-(defun parse-standing (tokens edition)
-  (multiple-value-bind (_ rest) (consume tokens :STANDING)
+(defun parse-edition-participants (tokens edition)
+  (multiple-value-bind (_ rest) (consume tokens :PARTICIPANTS)
     (multiple-value-bind (rest2 participants) (consume-array rest #'parse-participant-ref)
-      (setf (edition-standing edition) participants)
+      (setf (edition-participants edition) participants)
       (values rest2 edition participants))))
 
 (defun parse-define-block (tokens edition)
@@ -146,7 +146,6 @@
       (setf (game-points-identifier game) (token-literal string-token))
       (values rest game))))
 
-
 (defun parse-game-results (tokens game)
   (multiple-value-bind (_ rest) (consume tokens :RESULTS)
     (multiple-value-bind (rest results) (consume-array rest #'parse-participant-ref)
@@ -228,12 +227,16 @@
   (let ((elements ()))
     (multiple-value-bind (_ rest) (consume tokens :OPEN_BRACKET)
       (loop while (not (token-type-p (first rest) :CLOSE_BRACKET))
-            do (multiple-value-bind (element rest2) (consume rest)
-                 (let ((parsed-element (funcall element-parser element)))
-                   (push-end parsed-element elements))
-                 (setf rest rest2)))
-      (multiple-value-bind (_ rest3) (consume rest :CLOSE_BRACKET)
-        (values rest3 elements)))))
+            do (if (token-type-p (first rest) :OPEN_BRACKET)
+                   (multiple-value-bind (rest2 result) (consume-array rest element-parser)
+                     (setf rest rest2)
+                     (push-end result elements))
+                   (multiple-value-bind (element rest2) (consume rest)
+                     (let ((parsed-element (funcall element-parser element)))
+                       (push-end parsed-element elements))
+                     (setf rest rest2))))
+              (multiple-value-bind (_ rest) (consume rest :CLOSE_BRACKET)
+                (values rest elements)))))
 
 ; --- Helpers
 (defun consume (tokens &optional expected-type)

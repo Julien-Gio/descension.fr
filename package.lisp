@@ -21,14 +21,17 @@
            #:make-edition
            #:edition-name
            #:edition-dates
-           #:edition-standing
+           #:edition-participants
            #:edition-awards
            #:edition-description
            #:edition-game-groups
            #:edition-games
            #:edition-tournaments
+           #:get-edition-standing
+           #:participant-points-in-edition
            #:PARTICIPANT-REF
            #:make-participant-ref
+           #:participant-ref-p
            #:participant-ref-name
            #:participant-ref-equal-p
            #:GAME-GROUP

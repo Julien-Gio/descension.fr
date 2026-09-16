@@ -137,7 +137,7 @@
           ((equal lexeme "define") (make-token :type :DEFINE :lexeme lexeme :line line-num))
           ((equal lexeme "end") (make-token :type :END :lexeme lexeme :line line-num))
           ((equal lexeme "name") (make-token :type :NAME :lexeme lexeme :line line-num))
-          ((equal lexeme "standing") (make-token :type :STANDING :lexeme lexeme :line line-num))
+          ((equal lexeme "participants") (make-token :type :PARTICIPANTS :lexeme lexeme :line line-num))
           ((equal lexeme "description") (make-token :type :DESCRIPTION :lexeme lexeme :line line-num))
           ((equal lexeme "dates") (make-token :type :DATES :lexeme lexeme :line line-num))
           ((equal lexeme "game-group") (make-token :type :GAME-GROUP :lexeme lexeme :line line-num))
