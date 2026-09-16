@@ -54,7 +54,7 @@
                                                           collect (participant-points-for-games group-games p-name)
                                                             when (string= (game-group-format gg) "tournament")
                                                           collect (participant-points-for-tournament group-tournament p))))))
-           (html-table (append '(nil nil nil) game-groups) participant-points))))
+           (html-table (append '(nil nil "Total") game-groups) participant-points))))
 
 (defmacro trophies ()
   `(list :p "TROPHIES TODO"))
