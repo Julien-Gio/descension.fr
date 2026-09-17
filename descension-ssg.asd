@@ -18,6 +18,7 @@
      (:file "src/pages/2021")
      (:file "src/pages/2022")
      (:file "src/pages/2023")
+     (:file "src/pages/2024")
      (:file "src/pages/2025")
      (:file "src/pages/2026")
      (:file "src/pages/home")

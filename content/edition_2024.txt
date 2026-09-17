@@ -1,0 +1,64 @@
+type edition   ; this is a comment and is ignored.
+name "2024"
+dates from (2025-08-01) to (2025-08-04)
+participants [@Parapluie @404 @Catapulte @Pastaga @Dua @Otho  @Lintendo]
+
+description "Bla bla bla."
+
+define game-group "FFA"
+	description "Règles : chaque canditat joue à 4 jeux dans la liste."
+	points set [+6 +5 +4 +3 +2 +1 +0]
+	game "Blaze Rush" results [@Lintendo @Catapulte @Otho @Pastaga @Parapluie @Dua @404]
+	game "Boomerang fu" results [@Catapulte @404 @Dua @Lintendo @Pastaga @Parapluie @Otho]
+	game "12 orbits" results [@Pastaga @Dua @Catapulte @Otho @404 @Lintendo @Parapluie]
+	game "Tricky Towers" results [@Catapulte @Dua @Lintendo @Otho @Parapluie @Pastaga @404]
+	game "Towerfall ascension" results [@Catapulte @Parapluie @Otho @404 @Lintendo @Dua @Pastaga]
+	game "When I dream" results [@Dua @404 @Catapulte @Otho @Parapluie @Pastaga @Lintendo]
+end
+
+define game-group "Équipes"
+	description "Règles : +5 pour les jeux exterieurs. Pour les autres jeux, s'il est joué une seule fois : +5 pour l'équipe gagante. Sinon +3 par partie gagnée."
+	points set "single" +5
+	points set "multi" +2
+	game "Code names"
+	     points "single" 
+		 results [@Pastaga @Parapluie @Lintendo]
+	game "Captain sonar"
+	     points "single" 
+		 results [@404 @Dua @Pastaga @Parapluie]
+	game "Pétanque (1)"
+	     points "multi" 
+		 results [@Catapulte @Otho]
+	game "Pétanque (2)"
+	     points "multi" 
+		 results [@Catapulte @Otho]
+	game "Pétanque (3)"
+	     points "multi" 
+		 results [@Lintendo @Parapluie @Dua]
+end
+
+define game-group "Spécial"
+	description "TODO"
+	points set [+6 +5 +4 +3 +2 +1 +0]
+	points set "bingo" [+4.5 +4 +4 +3.5 +3 +3 +2.5]
+	game "Quiz pompe" results [@404 @Parapluie @Dua @Pastaga @Lintendo @Otho @Catapulte]
+	game "Surnoms" results [@Catapulte @Otho @404 @Lintendo @Parapluie @Pastaga @Dua]
+	game "Bingo" points "bingo" results [@404 @Lintendo @Otho @Dua @Parapluie @Pastaga @Catapulte]
+end
+
+define tournament "Tournoi"
+	description "This is a tournoi"
+	points set [+12 +9 +7 +5 +3 +3]
+	winners-bracket set "Quarts" [
+	  [@Dua @404]
+	  [@Otho @Pastaga]
+	  [@Catapulte @Lintendo]
+	]
+	winners-bracket set "Demi"   [[@Dua @Otho] [@Catapulte @Parapluie]]
+	winners-bracket set "Finale" [[@Catapulte @Dua]]
+	losers-bracket set "Huitièmes" [[@Pastaga @404]]
+	losers-bracket set "Quarts" [[@Pastaga @Parapluie] [@Lintendo @Otho]]
+	losers-bracket set "Demi" [[@Pastaga @Lintendo]]
+	losers-bracket set "Finale" [[@Dua @Pastaga]]
+	final-bracket set "Grande finale" [@Catapulte @Dua]
+end
