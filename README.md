@@ -1,75 +1,89 @@
-# DESCENSION SSG
+# DESCENSION.FR - Static Site Generator
+
+# Running the generator
+Install SBCL (or equivalent) and run the `run.lisp` file.
 ```
 sbcl --script run.lisp
 ```
 
-# Types and Grammar
+# Overview
+There are 4 parts to the generator:
+1. The `content`, which describes the meaningful data to display in the pages. The data is stored in a custom textfile format (see below).
+2. The `src/interpreter`, that lexes and parses the input data into an internal data structure.
+3. The `src/pages`, which lay out how to render each page.
+4. The `src/renderer`, that takes in a layout and outputs HTML.
+
+
+# Custom data format
+## Types and Grammar
 Data types:
-- Numbers (`123`, `3.1415`, `+12`, `-31`, `2.`, `.99`)
-- Dates (`2025-11-04`)
-- Strings (`single-word`, `dots.dont.split.identifiers`, `"string with spaces"`, strings can be multiline)
-- Tags (`#tags-start-with-hashtags`)
-- Participants (`@Pastaga`, `@P.M`, `@404`)
-- Arrays (`[...]`)
-- Ranges (`from ... to ...`)
-- Maps (`... set ...`)
-- Comments (`; comments start with semi-colon. Also, I know comments aren't datatype, whatever.`)
+- Numbers (e.g. `123`, `3.1415`, `+12`, `-31`, `2.`, `.99`)
+- Dates (e.g. `(2025-11-04)`)
+- Strings (e.g. `single-word`, `dots.dont.split.identifiers`, `"string with spaces need quotes"`, also strings can be multiline)
+- Tags (e.g. `#tags-start-with-hashtags`)
+- Participants (e.g. `@Pastaga`, `@P.M`, `@404`)
+- Lists (e.g. `[...]`)
+- Ranges (e.g. `from ... to ...`)
+- Maps (e.g. `... set ...`)
+- Comments (e.g. `; comments start with semi-colon. Also, I know comments aren't datatype, whatever.`)
 
 Tokens (grammar):
-```yaml
-NUMBER: "+"? "-"? DIGIT+ "."? DIGIT*
+```EBNF
+ALPHA: "a" | "b" ... | "z" | "A" | "B" ... | "Z" | "_"
+SIGN: "+" | "-"
+DIGIT: "0" | "1" ... | "9"
+NUMBER: SIGN? (DIGIT+ "."? DIGIT*) |
 DATE: "(" DIGIT DIGIT DIGIT DIGIT "-" DIGIT DIGIT "-" DIGIT DIGIT ")"
+SPECIAL: "." | "-" 
+IDENTIFIER: ALPHA (ALPHA | DIGIT | SPECIAL)*
 STRING: "\"" <anything but a double-quote>* "\""
 TAG: "#" (ALPHA | DIGIT | SPECIAL)+
 PARTICIPANT: "@" (ALPHA | DIGIT | SPECIAL)+
-IDENTIFIER: ALPHA (ALPHA | DIGIT | SPECIAL)*
-ALPHA: "a" | "b" ... | "z" | "A" | "B" ... | "Z" | "_"
-SPECIAL: "." | "-" 
-DIGIT: "0" | "1" ... | "9"
 
 // Keywords and other syntax
-OPEN_BRACKET: "["
-CLOSE_BRACKET: "]"
 TYPE: "type"
 EDITION: "edition"
+PARTICIPANTS: "participants"
 PARTICIPANT: "participant"
+DATES: "dates"
 FROM: "from"
 TO: "to"
 DEFINE: "define"
 END: "end"
 NAME: "name"
-PARTICIPANTS: "participants"
 DESCRIPTION: "description"
-DATES: "dates"
 GAME-GROUP: "game-group"
-TOURNAMENT: "tournament"
 POINTS: "points"
+SET: "set"
 GAME: "game"
 RESULTS: "results"
-SET: "set"
+TOURNAMENT: "tournament"
+WINNERS_BRACKET: "winners-bracket"
+LOSERS_BRACKET: "losers-bracket"
+FINAL_BRACKET: "final-bracket"
 ```
 
 Grammar :
 ```yaml
-expression: define-block
-           | type-expression
+expression: type-expression
+           | define-block
            | game-expression
            | set-expression
            | assignment-expression
 
+type-expression: "type" "edition"
+
 define-block: "define" IDENTIFIER STRING TAG* expression* "end"
 
-type-expression: "type" ("edition" | "participant")
+game-expression: "game" STRING ("points" STRING)? "results" array TAG*
 
-game-expression: "game" STRING "results" array TAG*
-
-set-expression: IDENTIFIER "set" IDENTIFIER litteral
+set-expression: IDENTIFIER "set" IDENTIFIER? litteral
 
 assignment-expression: IDENTIFIER literal
 
 literal: array | range | primary
 
-array: "[" (litteral TAG*)* "]"
+array: "[" litteral* "]"
 
 range: "from" DATE "to" DATE
 
@@ -77,9 +91,9 @@ primary: BOOLEAN | NUMBER | DATE | STRING | PARTICIPANT
 ```
 
 
-# Lexer
+## Lexer
 
-The lexer takes the raw text file and turns it into an array of tokens.
+The lexer takes the raw text file and turns it into a list of tokens.
 
 Here is an example:
 ```
@@ -95,9 +109,9 @@ This is a multi-line text example.
 
 define game-group "FFA (4 joueurs)" #individual-games
 	description "Règles : chaque canditat joue à 4 jeux dans la liste."
-	points [+5 +3 +2 +1]
-	game "Blaze Rush" results   [@Pastaga   @Otho      @Lintendo @404]
-	game "Tricky Tower" results [@P.M       @Catapulte @Dua      @Barbeer]
+	points set [+5 +3 +2 +1]
+	game "Blaze Rush" results [@Pastaga @Otho @Lintendo @404]
+	game "Tricky Towers" results [@P.M @Catapulte @Dua @Barbeer]
 end
 
 --- EXPECTED OUTPUT TOKENS ---
@@ -135,6 +149,7 @@ This is a multi-line text example.
 (DESCRIPTION)
 (STRING Règles : chaque canditat joue à 4 jeux dans la liste.)
 (POINTS)
+(SET)
 (OPEN_BRACKET [)
 (NUMBER +5)
 (NUMBER +3)
@@ -151,7 +166,7 @@ This is a multi-line text example.
 (PARTICIPANT 404)
 (CLOSE_BRACKET ])
 (GAME)
-(STRING Tricky Tower)
+(STRING Tricky Towers)
 (RESULTS)
 (OPEN_BRACKET [)
 (PARTICIPANT P.M)
@@ -163,83 +178,33 @@ This is a multi-line text example.
 ```
 
 
-# Parsing
+## Parsing
 
 After passing the input file through the lexer, the tokens are turned into fixed lisp structures.
-
-Files can be turned into 2 types of structures: editions and participants. 
-The file must start with the `type` keyword followed by `edition` or `participant` to determine the structure.
-
-```lisp
-(defstruct EDITION
-  :NAME nil  ; string 
-  :DATES nil  ; #S(RANGE)
-  :PARTICIPANTS nil  ; list of #S(PARTICIPANT-REF)
-  :DESCRIPTION nil  ; string
-  :GAME-GROUPS nil  ; list of #S(GAME-GROUP)
-  :GAMES nil)  ; list of #S(GAME)
-```
-
-```lisp
-(defstruct PARTICIPANT
-  :NAMES nil  ; string
-  :DESCRIPTION nil)  ; string
-```
-
-With substructures:
-```lisp
-(defstruct DATE
-  :YEAR 0  ; number
-  :MONTH 0  ; number (1 is january)
-  :DAY-OF-MONTH 0)  ; number
-
-(defstruct RANGE 
-  :START nil  ; date
-  :END nil)  ; date 
-
-(defstruct PARTICIPANT-REF
-  :NAME nil)  ; string
-
-(defstruct GAME-GROUP 
-  :NAME nil  ; string
-  :TAGS nil)  ; list of symbol
-
-(defstruct GAME 
-  :NAME nil  ; string
-  :DESCRIPTION nil  ; string
-  :GROUP nil  ; string
-  :TAGS nil  ; list of string
-  :POINTS 0  ; number
-  :RESULTS nil  ; list of #S(PARTICIPANT-REF)
-  :CUSTOM-DATA nil)  ; list of #S(GAME-CUSTOM-DATA)
-
-(defstruct GAME-CUSTOM-DATA
-  :NAME nil  ; string
-  :DATA nil  ; list of pairs(PARTICIPANT-REF, number | string)
-  :TAGS nil)  ; list of symbols
-```
+ 
+The file must start with the `type` keyword followed by `edition` to determine the structure.
+- Currently, this is the only allowed type, but this opens the door to more types later on.
 
 Example of decoded edition structure:  
 ```
 #S(EDITION
 	:NAME "2025"
 	:DATES #S(RANGE :START (2025 09 05) :END (2025 09 08))
-	:PARTICIPANTS (#S(PARTICIPANT :NAME "Parapluie") 
-			  #S(PARTICIPANT :NAME "404")
-			  #S(PARTICIPANT :NAME "P.M")
-			  #S(PARTICIPANT :NAME "Catapulte")
-			  #S(PARTICIPANT :NAME "Pastaga")
-			  #S(PARTICIPANT :NAME "Otho")
-			  #S(PARTICIPANT :NAME "Barbeer")
-			  #S(PARTICIPANT :NAME "Lintendo")
-			  #S(PARTICIPANT :NAME "JMM"))
+	:PARTICIPANTS (#S(PARTICIPANT-REF :NAME "Parapluie") 
+			  #S(PARTICIPANT-REF :NAME "404")
+			  #S(PARTICIPANT-REF :NAME "P.M")
+			  #S(PARTICIPANT-REF :NAME "Catapulte")
+			  #S(PARTICIPANT-REF :NAME "Pastaga")
+			  #S(PARTICIPANT-REF :NAME "Otho")
+			  #S(PARTICIPANT-REF :NAME "Barbeer")
+			  #S(PARTICIPANT-REF :NAME "Lintendo")
+			  #S(PARTICIPANT-REF :NAME "JMM"))
     :DESCRIPTION "..."
-	:GAME-GROUPS <list of> #S(GAME-GROUP :NAME "groupname" :TAGS <list of symbols>)
+	:GAME-GROUPS <list of> #S(GAME-GROUP :NAME "groupname" :TAGS ("highlight"))
 	:GAMES <list of> #S(GAME :NAME "name"
-	                         :DESCRIPTION "desc"
 	                         :GROUP "groupname"
-	                         :TAGS <list of symbols>
-							 :POINTS <number or list or hashtable>
-							 :RESULTS (<list of> #S(PARTICIPANT))))
+	                         :TAGS NIL
+							             :POINTS (5 3 2 1)
+							             :RESULTS (<list of> #S(PARTICIPANT-REF))))
 ```
 
